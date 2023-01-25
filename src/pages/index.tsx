@@ -11,7 +11,7 @@ const Home: NextPage = () => {
   const client = api.useContext();
 
   const [priority, setPriority] = useState<"CRITICAL" | "HIGH" | "MEDIUM" | "LOW">("CRITICAL");
-  const [category, setCategory] = useState<"WORK" | "PERSONAL" | "ERRANDS" | "GROCERIES">("WORK");
+  const [category, setCategory] = useState<"Work" | "Personal" | "Errands" | "Groceries">("Work");
   const { data: todo } = api.todo.getTodos.useQuery();
 
   const { mutate: createTodo } = api.todo.createTodo.useMutation({
@@ -47,7 +47,7 @@ const Home: NextPage = () => {
               {/* <button className="mt-5"><BsPlusLg className=" text-slate-100" fontSize="20" /></button> */}
               <div className="flex flex-col gap-x-20 items-center col-span-2">
                 <div className="flex flex-col gap-y-3 mt-10 font-nunito font-semibold w-full items-center">
-                  <label className="text-slate-200 font-normal text-xl">Priority</label>
+                  <label className="text-slate-200 font-normal text-xl">Priority: {priority}</label>
                   <div className="flex  gap-x-3">
                     <button type="button" onClick={() => setPriority("CRITICAL")} className="font-quicksand  min-w-[60px] rounded-lg bg-[red] p-2">Critical</button>
                     <button type="button" onClick={() => setPriority("HIGH")} className="font-quicksand min-w-[60px] rounded-lg bg-[orange] p-2">High</button>
@@ -57,12 +57,12 @@ const Home: NextPage = () => {
                 </div>
 
                 <div className="flex flex-col w-full items-center gap-y-3 mt-10 font-nunito">
-                  <label className="text-slate-200 font-normal text-xl">Category</label>
+                  <label className="text-slate-200 font-normal text-xl">Category: {category}</label>
                   <div className="flex  gap-x-3">
-                    <button type="button" onClick={() => setCategory("WORK")} className=" min-w-[60px] rounded-lg border p-2 text-slate-200">Work</button>
-                    <button type="button" onClick={() => setCategory("PERSONAL")} className="min-w-[60px] rounded-lg border p-2 text-slate-200">Personal</button>
-                    <button type="button" onClick={() => setCategory("ERRANDS")} className="min-w-[60px] rounded-lg border p-2 text-slate-200">Errands</button>
-                    <button type="button" onClick={() => setCategory("GROCERIES")} className="min-w-[60px] rounded-lg border p-2 text-slate-200">Groceries</button>
+                    <button type="button" onClick={() => setCategory("Work")} className=" min-w-[60px] rounded-lg border p-2 text-slate-200">Work</button>
+                    <button type="button" onClick={() => setCategory("Personal")} className="min-w-[60px] rounded-lg border p-2 text-slate-200">Personal</button>
+                    <button type="button" onClick={() => setCategory("Errands")} className="min-w-[60px] rounded-lg border p-2 text-slate-200">Errands</button>
+                    <button type="button" onClick={() => setCategory("Groceries")} className="min-w-[60px] rounded-lg border p-2 text-slate-200">Groceries</button>
                   </div>
                 </div>
               </div>

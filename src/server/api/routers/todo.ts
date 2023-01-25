@@ -8,7 +8,7 @@ export const todoSchema = z.object({
     dueDate: z.string().nullable(),
     note: z.string().nullable(),
     priority: z.enum(["CRITICAL", "HIGH", "MEDIUM", "LOW"]),
-    category: z.enum(["WORK", "PERSONAL", "ERRANDS", "GROCERIES"]),
+    category: z.enum(["Work", "Personal", "Errands", "Groceries"]),
 })
 
 

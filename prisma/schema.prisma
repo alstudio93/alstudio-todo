@@ -32,8 +32,8 @@ enum Priority {
 
 // We will make this its own table later so users can create their own category
 enum Category {
-    WORK
-    PERSONAL
-    ERRANDS
-    GROCERIES
+    Work
+    Personal
+    Errands
+    Groceries
 }
