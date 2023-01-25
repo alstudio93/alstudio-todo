@@ -1,14 +1,31 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import { BsPlusLg } from "react-icons/bs"
-import { IoIosCheckmarkCircleOutline } from "react-icons/io"
-import { MdOutlineCancel } from "react-icons/md"
-
 import { api } from "../utils/api";
 import TodoItem from "../components/TodoItem";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { CreateTodoSchema } from "../server/api/routers/todo";
+import { useState } from "react";
 
 const Home: NextPage = () => {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
+
+  const client = api.useContext();
+
+  const [priority, setPriority] = useState<"CRITICAL" | "HIGH" | "MEDIUM" | "LOW">("CRITICAL");
+  const [category, setCategory] = useState<"WORK" | "PERSONAL" | "ERRANDS" | "GROCERIES">("WORK");
+  const { data: todo } = api.todo.getTodos.useQuery();
+
+  const { mutate: createTodo } = api.todo.createTodo.useMutation({
+    onSuccess: () => {
+      client.todo.getTodos.invalidate();
+    },
+    onError: (e) => console.log(e.message)
+  })
+
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<CreateTodoSchema>();
+
+  const createTodoHandler: SubmitHandler<CreateTodoSchema> = (data) => {
+    createTodo({ ...data, priority, category })
+  }
 
   // Duplicate Functionality
   // Archive (soft delete)
@@ -29,51 +46,55 @@ const Home: NextPage = () => {
             <div className="flex flex-col items-center">
               <h2 className="text-slate-100 text-center text-xl">Create TODO</h2>
               {/* <button className="mt-5"><BsPlusLg className=" text-slate-100" fontSize="20" /></button> */}
-
-              <div className="flex flex-col gap-x-20 items-center">
+              <div className="flex flex-col gap-x-20 items-center col-span-2">
                 <div className="flex flex-col gap-y-3 mt-10 font-nunito font-semibold w-full items-center">
                   <label className="text-slate-200 font-normal text-xl">Priority</label>
                   <div className="flex  gap-x-3">
-                    <button className=" min-w-[60px] rounded-lg bg-[red] p-2">Critical</button>
-                    <button className="min-w-[60px] rounded-lg bg-[#cb820d] p-2">High</button>
-                    <button className="min-w-[60px] rounded-lg bg-[#5a89cf] p-2">Medium</button>
-                    <button className="min-w-[60px] rounded-lg bg-[#4eca38] p-2">Low</button>
+                    <button type="button" onClick={() => setPriority("CRITICAL")} className=" min-w-[60px] rounded-lg bg-[red] p-2">Critical</button>
+                    <button type="button" onClick={() => setPriority("HIGH")} className="min-w-[60px] rounded-lg bg-[#cb820d] p-2">High</button>
+                    <button type="button" onClick={() => setPriority("MEDIUM")} className="min-w-[60px] rounded-lg bg-[#5a89cf] p-2">Medium</button>
+                    <button type="button" onClick={() => setPriority("LOW")} className="min-w-[60px] rounded-lg bg-[#4eca38] p-2">Low</button>
                   </div>
                 </div>
 
                 <div className="flex flex-col w-full items-center gap-y-3 mt-10 font-nunito">
                   <label className="text-slate-200 font-normal text-xl">Category</label>
                   <div className="flex  gap-x-3">
-                    <button className=" min-w-[60px] rounded-lg border p-2 text-slate-200">Work</button>
-                    <button className="min-w-[60px] rounded-lg border p-2 text-slate-200">Personal</button>
-                    <button className="min-w-[60px] rounded-lg border p-2 text-slate-200">Errands</button>
-                    <button className="min-w-[60px] rounded-lg border p-2 text-slate-200">Groceries</button>
+                    <button type="button" onClick={() => setCategory("WORK")} className=" min-w-[60px] rounded-lg border p-2 text-slate-200">Work</button>
+                    <button type="button" onClick={() => setCategory("PERSONAL")} className="min-w-[60px] rounded-lg border p-2 text-slate-200">Personal</button>
+                    <button type="button" onClick={() => setCategory("ERRANDS")} className="min-w-[60px] rounded-lg border p-2 text-slate-200">Errands</button>
+                    <button type="button" onClick={() => setCategory("GROCERIES")} className="min-w-[60px] rounded-lg border p-2 text-slate-200">Groceries</button>
                   </div>
                 </div>
               </div>
+
             </div>
-            <form className="grid grid-cols-2 gap-x-8 gap-y-8 justify-items-center mt-10">
+            <form onSubmit={handleSubmit(createTodoHandler)} className="grid grid-cols-2 gap-x-8 gap-y-8 justify-items-center mt-10">
+
+
+
               <fieldset className="flex flex-col gap-y-1">
                 <label className="text-slate-200 text-xl" htmlFor="title">Title</label>
-                <input id="title" type="text" className="border-b-2 bg-transparent w-[300px] focus:border-b-2 focus:outline-none text-white p-2" />
+                <input {...register("title")} id="title" type="text" className="border-b-2 bg-transparent w-[300px] focus:border-b-2 focus:outline-none text-white p-2" />
               </fieldset>
 
 
               <fieldset className="flex flex-col gap-y-1">
                 <label className="text-slate-200 text-xl" htmlFor="dueDate">Due Date</label>
-                <input id="dueDate" type="date" className="border-b-2 bg-transparent w-[300px] focus:border-b-2 focus:outline-none text-white py-2" />
+                <input {...register("dueDate")} id="dueDate" type="date" className="border-b-2 bg-transparent w-[300px] focus:border-b-2 focus:outline-none text-white py-2" />
               </fieldset>
 
               <fieldset className="flex flex-col gap-y-1 col-span-2 w-full ">
                 <label className="text-slate-200 text-xl" htmlFor="optionalNote">Optional Note</label>
-                <textarea id="optionalNote" className="border bg-transparent text-white p-2 rounded-lg " />
+                <textarea {...register("note")} id="optionalNote" className="border bg-transparent text-white p-2 rounded-lg " />
               </fieldset>
               <button className="border w-full p-2 text-slate-200 rounded-lg col-span-2" >Create Your TODO</button>
             </form>
-
           </div>
 
           {/* Get Tasks Column */}
+
+          {/* Pagination for List Items */}
           <div className=" w-[500px]  shadow-xl rounded-lg mt-10 pt-10 px-5 flex flex-col items-center overflow-y-auto">
             <h2 className="text-slate-100 text-center text-2xl">Update TODO</h2>
             <select className="bg-slate-300 p-2 cursor-pointer mt-5 rounded-lg mb-6">
@@ -82,12 +103,13 @@ const Home: NextPage = () => {
               <option>Sort by Created Asc</option>
               <option>Sort by Created Desc</option>
             </select>
-            <TodoItem />
-            <TodoItem />
-            <TodoItem />
-            <TodoItem />
-            <TodoItem />
-            <TodoItem />
+            {
+              todo?.map((todo) => {
+                return (
+                  <TodoItem key={todo.id} todo={todo} />
+                )
+              })
+            }
 
           </div>
         </div>
