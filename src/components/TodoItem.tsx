@@ -19,6 +19,11 @@ const TodoItem: React.FC<{
             }
         }
 
+        const priorityCritical = todo.priority === "CRITICAL" && "bg-[red]";
+        const priorityHigh = todo.priority === "HIGH" && "bg-[orange]";
+        const priorityMedium = todo.priority === "HIGH" && "bg-[blue]";
+        const priorityLow = todo.priority === "LOW" && "bg-[green]";
+
         return (
             <>
                 <div className="p-3 w-full rounded-lg mb-8">
@@ -36,7 +41,8 @@ const TodoItem: React.FC<{
                             <div className='flex justify-between items-center'>
                                 <h2 className='text-xl text-slate-200'>{todo.title}</h2>
                                 <div className='flex items-center gap-x-2'>
-                                    <span className={`${todo.priority === "CRITICAL" ? "bg-[red] rounded-lg p-2" : ""}`}>{todo.priority}</span>
+                                    {<span className={`${priorityCritical || priorityHigh || priorityMedium || priorityLow} p-2 rounded-lg`}>{todo.priority}</span>}
+                                    {/* {todo.priority === "LOW" && <span className={`${todo.priority === "LOW" ? "bg-[green] rounded-lg p-2" : ""}`}>{todo.priority}</span>} */}
                                     <span className="rounded-lg p-2 border text-slate-200">{todo.category}</span>
                                 </div>
                             </div>

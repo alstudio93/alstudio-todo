@@ -26,8 +26,8 @@ export const todoRouter = createTRPCRouter({
 
     createTodo: publicProcedure
         .input(todoSchema)
-        .mutation(async ({ ctx, input }) => {
-            const todo = await ctx.prisma.todo.create({
+        .mutation(({ ctx, input }) => {
+            const todo = ctx.prisma.todo.create({
                 data: {
                     title: input.title,
                     dueDate: input.dueDate,
