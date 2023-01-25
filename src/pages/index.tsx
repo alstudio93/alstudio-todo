@@ -16,7 +16,7 @@ const Home: NextPage = () => {
 
   const { mutate: createTodo } = api.todo.createTodo.useMutation({
     onSuccess: () => {
-      client.todo.getTodos.invalidate();
+      client.todo.getTodos.invalidate()
     },
     onError: (e) => console.log(e.message)
   })
@@ -110,7 +110,6 @@ const Home: NextPage = () => {
                 )
               })
             }
-
           </div>
         </div>
       </main>
