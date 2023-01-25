@@ -5,8 +5,8 @@ import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const todoSchema = z.object({
     title: z.string(),
-    dueDate: z.string().optional(),
-    note: z.string().optional(),
+    dueDate: z.string().nullable(),
+    note: z.string().nullable(),
     priority: z.enum(["CRITICAL", "HIGH", "MEDIUM", "LOW"]),
     category: z.enum(["WORK", "PERSONAL", "ERRANDS", "GROCERIES"]),
 })

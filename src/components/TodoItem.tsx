@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai"
+import { CreateTodoSchema } from '../server/api/routers/todo';
+
 
 const TodoItem: React.FC<{
-    todo: any;
+    todo: CreateTodoSchema;
 }> = ({
     todo
 }) => {
@@ -17,7 +19,6 @@ const TodoItem: React.FC<{
             }
         }
 
-        console.log(todo.category)
         return (
             <>
                 <div className="p-3 w-full rounded-lg mb-8">
