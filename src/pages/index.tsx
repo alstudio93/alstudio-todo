@@ -13,9 +13,9 @@ const Home: NextPage = () => {
   const { data: todo } = api.todo?.getTodos.useQuery();
 
   const [todoData, setTodoData] = useState(todo);
-  const [sortState, setSortState] = useState("");
+  const [sortState, setSortState] = useState<string>("");
 
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const resultsPerPage = 5;
@@ -124,7 +124,7 @@ const Home: NextPage = () => {
 
           {/* Pagination for List Items */}
           <div className=" w-[500px]  shadow-xl rounded-lg mt-10 pt-10 px-5 flex flex-col items-center overflow-y-auto">
-            <h2 className="text-slate-100 w-full text-left text-2xl">My TODO's</h2>
+            <h2 className="text-slate-100 w-full text-left text-2xl">My TODO&apos;s</h2>
             <div className="flex items-center justify-between w-full">
               <input placeholder='Search by Title' onChange={(e) => setSearchQuery(e.target.value)} type="search" className='p-2 rounded-lg  font-nunito focus:p-2 focus:pl-2 shadow-lg' />
               <select className="bg-slate-300 p-2 cursor-pointer mt-5 rounded-lg mb-6" onChange={(e) => setSortState(e.target.value)}>

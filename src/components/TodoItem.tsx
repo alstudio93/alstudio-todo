@@ -16,7 +16,7 @@ const TodoItem: React.FC<{
         const [todoState, setTodoState] = useState("closed");
         const [elementToEdit, setElementToEdit] = useState("no-edit");
         const [editElement, setEditElement] = useState("");
-        const [showSave, setShowSave] = useState(false);
+        // const [showSave, setShowSave] = useState(false);
 
         const updatedTitle = useRef(todo?.title);
 
@@ -32,31 +32,31 @@ const TodoItem: React.FC<{
             }
         }
 
-        useEffect(() => {
-            if (elementToEdit === "h2") {
-                titleRef.current?.focus();
-            } else if (elementToEdit === "p") {
-                noteRef.current?.focus();
+        // useEffect(() => {
+        //     if (elementToEdit === "h2") {
+        //         titleRef.current?.focus();
+        //     } else if (elementToEdit === "p") {
+        //         noteRef.current?.focus();
 
-            }
-        }, [elementToEdit]);
+        //     }
+        // }, [elementToEdit]);
 
         const priorityCritical = todo.priority === "CRITICAL" && "bg-[red]";
         const priorityHigh = todo.priority === "HIGH" && "bg-[orange]";
         const priorityMedium = todo.priority === "MEDIUM" && "bg-[blue]";
         const priorityLow = todo.priority === "LOW" && "bg-[green]";
 
-        const { mutate: updateTodo } = api.todo.updateTodo.useMutation({
-            onSuccess: async () => {
-                await client.todo.getTodos.invalidate();
-            }
-        });
+        // const { mutate: updateTodo } = api.todo.updateTodo.useMutation({
+        //     onSuccess: async () => {
+        //         await client.todo.getTodos.invalidate();
+        //     }
+        // });
 
-        const handleUpdateTodo = () => {
-            const updatedTitle = titleRef.current?.textContent;
+        // const handleUpdateTodo = () => {
+        //     const updatedTitle = titleRef.current?.textContent;
 
-            updateTodo()
-        }
+        //     updateTodo()
+        // }
 
         const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<CreateTodoSchema>();
         useEffect(() => {
@@ -127,9 +127,9 @@ const TodoItem: React.FC<{
                                         todo?.note &&
                                         <div className="flex items-center pr-6 w-full" onMouseOver={() => setEditElement("p")} onMouseLeave={() => setEditElement("")}>
                                             {/* <p tabIndex={0} onFocus={() => setEditElement("p")} className='text-slate-200 py-2 pr-3 mt-5' contentEditable={elementToEdit === "p" ? "true" : "false"} ref={noteRef}>{todo?.note}</p> */}
-                                            <p tabIndex={0} onFocus={() => setEditElement("p")} className={`text-slate-200 py-2 pr-3 mt-5 ${elementToEdit === "p" ? "hidden" : "block"}`} ref={noteRef}>{todo?.note}</p>
+                                            <p tabIndex={0} className={`text-slate-200 py-2 pr-3 mt-5 ${elementToEdit === "p" ? "hidden" : "block"}`} ref={noteRef}>{todo?.note}</p>
 
-                                            {elementToEdit === "p" && <textarea tabIndex={0} onFocus={() => setEditElement("p")} className='bg-transparent text-slate-200 py-2 pr-3 mt-5 w-[350px]' contentEditable={elementToEdit === "p" ? "true" : "false"} ref={noteRef}>{todo?.note}</textarea>}
+                                            {elementToEdit === "p" && <textarea tabIndex={0} className='bg-transparent text-slate-200 py-2 pr-3 mt-5 w-[350px]' contentEditable={elementToEdit === "p" ? "true" : "false"} ref={noteRef}>{todo?.note}</textarea>}
                                             {editElement === "p" && <button type="button" onClick={() => setElementToEdit("p")}><CiEdit className="cursor-pointer text-2xl text-slate-200 " /></button>}
                                         </div>
                                     }
