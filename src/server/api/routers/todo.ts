@@ -4,6 +4,7 @@ import { createTRPCRouter, publicProcedure } from "../trpc";
 
 
 export const todoSchema = z.object({
+    id: z.string().optional(),
     title: z.string(),
     dueDate: z.string().nullable(),
     note: z.string().nullable(),
@@ -37,5 +38,23 @@ export const todoRouter = createTRPCRouter({
                 }
             });
             return todo;
+        }),
+
+    updateTodo: publicProcedure
+        .input(todoSchema)
+        .mutation(({ ctx, input }) => {
+            const todo = ctx.prisma.todo.update({
+                where: {
+                    id: input?.id,
+                },
+                data: {
+                    dueDate: input.dueDate,
+                    note: input.note,
+                    priority: input.priority,
+                    category: input.category
+                }
+            })
+            return todo;
         })
+
 });

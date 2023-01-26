@@ -4,15 +4,25 @@ import { api } from "../utils/api";
 import TodoItem from "../components/TodoItem";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { CreateTodoSchema } from "../server/api/routers/todo";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Pagination from "../components/Pagination";
 
 const Home: NextPage = () => {
 
   const client = api.useContext();
+  const { data: todo } = api.todo?.getTodos.useQuery();
+
+  const [todoData, setTodoData] = useState(todo);
+  const [sortState, setSortState] = useState("");
+
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const resultsPerPage = 5;
+  const totalPages = Math.ceil(todo?.length / resultsPerPage);
 
   const [priority, setPriority] = useState<"CRITICAL" | "HIGH" | "MEDIUM" | "LOW">("CRITICAL");
   const [category, setCategory] = useState<"Work" | "Personal" | "Errands" | "Groceries">("Work");
-  const { data: todo } = api.todo.getTodos.useQuery();
 
   const { mutate: createTodo } = api.todo.createTodo.useMutation({
     onSuccess: async () => {
@@ -29,6 +39,25 @@ const Home: NextPage = () => {
   // Duplicate Functionality
   // Archive (soft delete)
 
+  useEffect(() => {
+    // Fetch the data and search / sort
+    if (todo) {
+      const filteredData = todo?.filter(todo => {
+        return todo.title.toLowerCase().includes(searchQuery.toLowerCase()) || todo.category.toLowerCase().includes(searchQuery.toLowerCase())
+      });
+      let data = filteredData.slice((currentPage - 1) * resultsPerPage, currentPage * resultsPerPage);
+
+      if (sortState === "Title A-Z") {
+        data = data.sort((a, b) => a.title.localeCompare(b.title));
+      } else if (sortState === "Title Z-A") {
+        data = data.sort((a, b) => b.title.localeCompare(a.title));
+      }
+      setTodoData(data);
+    }
+  }, [todo, currentPage, sortState, searchQuery]);
+
+  console.log(todoData)
+
   return (
     <div className="bg-slate-800">
       <Head>
@@ -40,11 +69,11 @@ const Home: NextPage = () => {
         <h1 className="mt-8 text-slate-100 tracking-wide font-quicksand text-3xl">TODO Application</h1>
 
         <div className="flex max-w-7xl w-full gap-x-10">
-          {/* Create Column */}
+
+          {/* Create TASK Column */}
           <div className="flex-1   shadow-xl rounded-lg mt-10 py-10 flex flex-col items-center overflow-y-auto ">
             <div className="flex flex-col items-center">
               <h2 className="text-slate-100 text-center text-xl">Create TODO</h2>
-              {/* <button className="mt-5"><BsPlusLg className=" text-slate-100" fontSize="20" /></button> */}
               <div className="flex flex-col gap-x-20 items-center col-span-2">
                 <div className="flex flex-col gap-y-3 mt-10 font-nunito font-semibold w-full items-center">
                   <label className="text-slate-200 font-normal text-xl">Priority: {priority}</label>
@@ -95,20 +124,29 @@ const Home: NextPage = () => {
 
           {/* Pagination for List Items */}
           <div className=" w-[500px]  shadow-xl rounded-lg mt-10 pt-10 px-5 flex flex-col items-center overflow-y-auto">
-            <h2 className="text-slate-100 text-center text-2xl">Update TODO</h2>
-            <select className="bg-slate-300 p-2 cursor-pointer mt-5 rounded-lg mb-6">
-              <option>Sort by A - Z</option>
-              <option>Sort by Z - A</option>
-              <option>Sort by Created Asc</option>
-              <option>Sort by Created Desc</option>
-            </select>
+            <h2 className="text-slate-100 w-full text-left text-2xl">My TODO's</h2>
+            <div className="flex items-center justify-between w-full">
+              <input placeholder='Search by Title' onChange={(e) => setSearchQuery(e.target.value)} type="search" className='p-2 rounded-lg  font-nunito focus:p-2 focus:pl-2 shadow-lg' />
+              <select className="bg-slate-300 p-2 cursor-pointer mt-5 rounded-lg mb-6" onChange={(e) => setSortState(e.target.value)}>
+                <option value="default">Sort By</option>
+                <option>Title A-Z</option>
+                <option>Title Z-A</option>
+                <option>Created Asc</option>
+                <option>Created Desc</option>
+              </select>
+            </div>
             {
-              todo?.map((todo) => {
+              todoData?.map((todo) => {
                 return (
                   <TodoItem key={todo.id} todo={todo} />
                 )
               })
             }
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
           </div>
         </div>
       </main>
