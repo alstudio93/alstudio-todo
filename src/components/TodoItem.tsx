@@ -47,10 +47,10 @@ const TodoItem: React.FC<{
         });
 
         const handleUpdateTodo: SubmitHandler<EditTodoSchema> = (data) => {
-            const { title, note, completed } = data;
+            const { title, note, category, completed } = data;
             const id = todo?.id
 
-            updateTodo({ title, note, completed, id })
+            updateTodo({ title, note, category, completed, id })
         }
 
         const { mutate: duplicateTodo } = api.todo.duplicateTodo.useMutation({
@@ -82,6 +82,7 @@ const TodoItem: React.FC<{
         useEffect(() => {
             setValue("title", todo.title);
             setValue("note", todo?.note);
+            setValue("category", todo?.category);
         }, [todo.title, todo?.note, setValue]);
 
         const todoClosedPseudoBeforeStyles = `${priorityCritical && "before:bg-[red]"} ${priorityHigh && "before:bg-[orange]"}
@@ -115,38 +116,95 @@ const TodoItem: React.FC<{
                             <form className="p-3 relative" onSubmit={handleSubmit(handleUpdateTodo)}>
                                 <div className='flex justify-between items-start'>
                                     <div>
-                                        <div className="text-white text-xl flex gap-x-2 items-center pr-3" onMouseOver={() => setShowEditIconForElement("h2")} onMouseLeave={() => setShowEditIconForElement("")}>
+                                        <div className="text-white text-xl flex gap-x-2 items-center pr-3" onMouseOver={() => setShowEditIconForElement("todoTitle")} onMouseLeave={() => setShowEditIconForElement("")}>
                                             <h2
-                                                className={`text-xl text-slate-200 ${elementToEdit === "h2" ? "hidden" : "block"}`}
+                                                className={`text-xl text-slate-200 ${elementToEdit === "todoTitle" ? "hidden" : "block"}`}
                                                 tabIndex={0}
-                                                onFocus={() => setShowEditIconForElement("h2")}
+                                                onFocus={() => setShowEditIconForElement("todoTitle")}
                                                 ref={titleRef}>
                                                 {todo.title}
                                             </h2>
 
                                             {/* TODO: Press escape to cancel editing */}
-                                            {elementToEdit === "h2" &&
+                                            {elementToEdit === "todoTitle" &&
                                                 <input
                                                     defaultValue={todo?.title}
                                                     name="title"
                                                     {...register("title")}
-                                                    className=' pr-10 text-lg text-slate-200 bg-transparent'
+                                                    className='pr-10 text-lg text-slate-200 bg-transparent'
                                                 />
                                             }
 
-                                            {showEditIconForElement === "h2" &&
+                                            {showEditIconForElement === "todoTitle" &&
                                                 <button
                                                     type="button"
-                                                    onClick={() => setElementToEdit("h2")}>
+                                                    onClick={() => setElementToEdit("todoTitle")}>
                                                     <CiEdit className="cursor-pointer" />
                                                 </button>
                                             }
                                         </div>
 
 
-                                        <div className="flex flex-col ">
-                                            <span className="text-slate-200">Category: {todo.category}</span>
-                                            <span className="text-slate-200">Category: {todo.priority}</span>
+                                        <div className="flex flex-col">
+                                            <div className={`flex gap-x-2`} onMouseOver={() => setShowEditIconForElement("todoCategory")} onMouseLeave={() => setShowEditIconForElement("")}>
+                                                <p
+                                                    tabIndex={0}
+                                                    onFocus={() => setShowEditIconForElement("todoCategory")}
+                                                    className={`text-slate-200 ${elementToEdit === "todoCategory" ? "hidden" : "block"}`}
+                                                >Category: <span>{todo.category}</span>
+                                                </p>
+
+                                                {/* TODO: Press escape to cancel editing */}
+                                                {elementToEdit === "todoCategory" &&
+                                                    <fieldset className="flex gap-x-2 items-center">
+                                                        <label className='text-slate-200'>Category:</label>
+                                                        <input
+                                                            defaultValue={todo?.category}
+                                                            name="category"
+                                                            {...register("category")}
+                                                            className='text-slate-200 bg-transparent w-[100px]'
+                                                        />
+                                                    </fieldset>
+                                                }
+                                                {showEditIconForElement === "todoCategory" &&
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setElementToEdit("todoCategory")}>
+                                                        <CiEdit className="cursor-pointer text-white" />
+                                                    </button>
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div className="flex flex-col">
+                                            <div className={`flex gap-x-2`} onMouseOver={() => setShowEditIconForElement("todoPriority")} onMouseLeave={() => setShowEditIconForElement("")}>
+                                                <p
+                                                    tabIndex={0}
+                                                    onFocus={() => setShowEditIconForElement("todoPriority")}
+                                                    className={`text-slate-200 ${elementToEdit === "todoPriority" ? "hidden" : "block"}`}
+                                                >Priority: <span>{todo.priority}</span>
+                                                </p>
+
+                                                {/* TODO: Press escape to cancel editing */}
+                                                {elementToEdit === "todoPriority" &&
+                                                    <fieldset className="flex gap-x-2 items-center">
+                                                        <label className='text-slate-200'>Priority:</label>
+                                                        <input
+                                                            defaultValue={todo?.priority}
+                                                            name="priority"
+                                                            {...register("priority")}
+                                                            className='text-slate-200 bg-transparent w-[100px]'
+                                                        />
+                                                    </fieldset>
+                                                }
+                                                {showEditIconForElement === "todoPriority" &&
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setElementToEdit("todoPriority")}>
+                                                        <CiEdit className="cursor-pointer text-white" />
+                                                    </button>
+                                                }
+                                            </div>
                                         </div>
 
                                     </div>
@@ -158,21 +216,21 @@ const TodoItem: React.FC<{
 
                                 {
                                     todo?.note &&
-                                    <div className="flex items-center pr-6 w-full mt-5" onMouseOver={() => setShowEditIconForElement("p")} onMouseLeave={() => setShowEditIconForElement("")}>
+                                    <div className="flex items-center pr-6 w-full mt-5" onMouseOver={() => setShowEditIconForElement("todoNote")} onMouseLeave={() => setShowEditIconForElement("")}>
                                         <p
                                             tabIndex={0}
-                                            onFocus={() => setShowEditIconForElement("p")}
-                                            className={`text-slate-200 py-2 pr-3  ${elementToEdit === "p" ? "hidden" : "block"}`}
+                                            onFocus={() => setShowEditIconForElement("todoNote")}
+                                            className={`text-slate-200 py-2 pr-3  ${elementToEdit === "todoNote" ? "hidden" : "block"}`}
                                             ref={noteRef}>
                                             {todo?.note}
                                         </p>
                                         {/* TODO: Press escape to cancel editing */}
-                                        {elementToEdit === "p" &&
+                                        {elementToEdit === "todoNote" &&
                                             <textarea
                                                 {...register("note")}
                                                 defaultValue={todo?.note}
                                                 className='bg-transparent text-slate-200 py-2 pr-3 mt-5 w-[350px]' />}
-                                        {showEditIconForElement === "p" && <button type="button" onClick={() => setElementToEdit("p")}><CiEdit className="cursor-pointer text-2xl text-slate-200 " /></button>}
+                                        {showEditIconForElement === "todoNote" && <button type="button" onClick={() => setElementToEdit("todoNote")}><CiEdit className="cursor-pointer text-2xl text-slate-200 " /></button>}
                                     </div>
                                 }
                                 <div className="flex items-center justify-between pt-5">
