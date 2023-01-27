@@ -21,7 +21,6 @@ const Home: NextPage = () => {
 
   const [todoData, setTodoData] = useState(todo);
   const [sortState, setSortState] = useState<string>("");
-  const [todoState, setTodoState] = useState("closed");
 
 
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -114,12 +113,12 @@ const Home: NextPage = () => {
 
             </div>
             {/* After Refactor */}
-            <CreateTodoForm
+            {/* <CreateTodoForm
               createTodoHandler={createTodoHandler}
-            />
+            /> */}
 
             {/* Before Refactor */}
-            {/* <form onSubmit={handleSubmit(createTodoHandler)} className="grid grid-cols-2 gap-x-8 gap-y-8 justify-items-center mt-10">
+            <form onSubmit={handleSubmit(createTodoHandler)} className="grid grid-cols-2 gap-x-8 gap-y-8 justify-items-center mt-10">
 
               <fieldset className="flex flex-col gap-y-1">
                 <label className="text-slate-200 text-xl" htmlFor="title">Title</label>
@@ -138,7 +137,7 @@ const Home: NextPage = () => {
 
               <button type="submit" className="border w-full p-2 text-slate-200 rounded-lg col-span-2" >Create Your TODO</button>
 
-            </form> */}
+            </form>
           </div>
 
           {/* Get Tasks Column */}
@@ -146,7 +145,7 @@ const Home: NextPage = () => {
           <div className=" w-[500px]  shadow-xl rounded-lg mt-10 py-10 px-5 flex flex-col items-center justify-between relative ">
             {helpMenu === "open" && <div className="absolute top-0 right-0 bottom-0 left-0 bg-[#18202F] z-20 p-5 rounded-lg text-slate-200">
               <div className="flex items-center justify-between w-full">
-                <h2 className="text-2xl font-quicksand">What's Included?</h2>
+                <h2 className="text-2xl font-quicksand">What&apos;s Included?</h2>
                 <button type="button" onClick={() => setHelpMenu("closed")}><MdOutlineClose className="text-slate-200 text-2xl" /></button>
               </div>
               <div className="mt-5">
@@ -179,7 +178,6 @@ const Home: NextPage = () => {
             </div>
 
             <div className="flex flex-col h-full w-full pt-5">
-              {<button className="text-slate-200 w-full text-right" type="button">Collapse All</button>}
               {
                 todoData?.map((todo) => {
                   return (
