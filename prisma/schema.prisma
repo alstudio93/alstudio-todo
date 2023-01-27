@@ -15,7 +15,7 @@ model Todo {
     id        String   @id @default(cuid())
     title     String
     dueDate   String?
-    note      String?
+    note      String?  @db.Text
     priority  Priority
     category  Category
     completed Boolean
@@ -25,10 +25,10 @@ model Todo {
 
 // We will make this its own table later so users can create their own Priority
 enum Priority {
-    CRITICAL
-    HIGH
-    MEDIUM
-    LOW
+    Critical
+    High
+    Medium
+    Low
 }
 
 // We will make this its own table later so users can create their own category

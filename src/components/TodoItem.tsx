@@ -33,10 +33,10 @@ const TodoItem: React.FC<{
             }
         }
 
-        const priorityCritical = todo.priority === "CRITICAL" && "bg-[red]";
-        const priorityHigh = todo.priority === "HIGH" && "bg-[orange]";
-        const priorityMedium = todo.priority === "MEDIUM" && "bg-[blue]";
-        const priorityLow = todo.priority === "LOW" && "bg-[green]";
+        const priorityCritical = todo.priority === "Critical" && "bg-[red]";
+        const priorityHigh = todo.priority === "High" && "bg-[orange]";
+        const priorityMedium = todo.priority === "Medium" && "bg-[blue]";
+        const priorityLow = todo.priority === "Low" && "bg-[green]";
 
         const { mutate: updateTodo } = api.todo.updateTodo.useMutation({
             onSuccess: async () => {
@@ -144,7 +144,10 @@ const TodoItem: React.FC<{
                                         </div>
 
 
-                                        <span className="text-slate-200">Category: {todo.category}</span>
+                                        <div className="flex flex-col ">
+                                            <span className="text-slate-200">Category: {todo.category}</span>
+                                            <span className="text-slate-200">Category: {todo.priority}</span>
+                                        </div>
 
                                     </div>
                                     <BsFillGearFill

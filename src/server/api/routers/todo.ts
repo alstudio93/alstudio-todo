@@ -8,7 +8,7 @@ export const todoSchema = z.object({
     title: z.string(),
     dueDate: z.string().nullable(),
     note: z.string().nullable(),
-    priority: z.enum(["CRITICAL", "HIGH", "MEDIUM", "LOW"]),
+    priority: z.enum(["Critical", "High", "Medium", "Low"]),
     category: z.enum(["Work", "Personal", "Errands", "Groceries"]),
 })
 
@@ -20,7 +20,7 @@ export const editTodoSchema = z.object({
     title: z.string().optional(),
     dueDate: z.string().nullable().optional(),
     note: z.string().nullable().optional(),
-    priority: z.enum(["CRITICAL", "HIGH", "MEDIUM", "LOW"]).optional(),
+    priority: z.enum(["Critical", "High", "Medium", "Low"]).optional(),
     category: z.enum(["Work", "Personal", "Errands", "Groceries"]).optional(),
     completed: z.boolean(),
 })

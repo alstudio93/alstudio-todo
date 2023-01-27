@@ -21,7 +21,7 @@ const Home: NextPage = () => {
   const resultsPerPage = 5;
   const totalPages = Math.ceil(todo?.length / resultsPerPage);
 
-  const [priority, setPriority] = useState<"CRITICAL" | "HIGH" | "MEDIUM" | "LOW">("CRITICAL");
+  const [priority, setPriority] = useState<"Critical" | "High" | "Medium" | "Low">("Critical");
   const [category, setCategory] = useState<"Work" | "Personal" | "Errands" | "Groceries">("Work");
 
   const { mutate: createTodo } = api.todo.createTodo.useMutation({
@@ -76,10 +76,10 @@ const Home: NextPage = () => {
                 <div className="flex flex-col gap-y-3 mt-10 w-full items-center">
                   <label className="text-slate-200 font-normal text-xl">Priority: {priority}</label>
                   <div className="flex  gap-x-3">
-                    <button type="button" onClick={() => setPriority("CRITICAL")} className=" font-bold  min-w-[60px] rounded-lg bg-[red] p-2">Critical</button>
-                    <button type="button" onClick={() => setPriority("HIGH")} className="font-bold  min-w-[60px] rounded-lg bg-[orange] p-2">High</button>
-                    <button type="button" onClick={() => setPriority("MEDIUM")} className="font-bold  min-w-[60px] rounded-lg bg-[blue] p-2">Medium</button>
-                    <button type="button" onClick={() => setPriority("LOW")} className="font-bold  min-w-[60px] rounded-lg bg-[green] p-2">Low</button>
+                    <button type="button" onClick={() => setPriority("Critical")} className=" font-bold  min-w-[60px] rounded-lg bg-[red] p-2">Critical</button>
+                    <button type="button" onClick={() => setPriority("High")} className="font-bold  min-w-[60px] rounded-lg bg-[orange] p-2">High</button>
+                    <button type="button" onClick={() => setPriority("Medium")} className="font-bold  min-w-[60px] rounded-lg bg-[blue] p-2">Medium</button>
+                    <button type="button" onClick={() => setPriority("Low")} className="font-bold  min-w-[60px] rounded-lg bg-[green] p-2">Low</button>
                   </div>
                 </div>
 
