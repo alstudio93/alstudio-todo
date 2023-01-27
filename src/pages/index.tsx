@@ -96,20 +96,20 @@ const Home: NextPage = () => {
                   <label className="text-slate-200 font-normal text-xl">Priority: {priority}</label>
 
                   <div className="flex  gap-x-3">
-                    <button type="button" onClick={() => setPriority("Critical")} className=" font-bold  min-w-[60px] rounded-lg bg-[red] p-2">Critical</button>
-                    <button type="button" onClick={() => setPriority("High")} className="font-bold  min-w-[60px] rounded-lg bg-[orange] p-2">High</button>
-                    <button type="button" onClick={() => setPriority("Medium")} className="font-bold  min-w-[60px] rounded-lg bg-[blue] p-2">Medium</button>
-                    <button type="button" onClick={() => setPriority("Low")} className="font-bold  min-w-[60px] rounded-lg bg-[green] p-2">Low</button>
+                    <button type="button" onClick={() => setPriority("Critical")} className={` font-bold  min-w-[60px] rounded-lg  p-2 relative ${priority === "Critical" ? "bg-[#ff0000a7] text-slate-200 before:bg-[#ff0000a7]  before:absolute before:h-1 before:w-full before:-bottom-3 before:left-0 before:rounded-lg" : "bg-[#00000038] text-white"}`} >Critical</button>
+                    <button type="button" onClick={() => setPriority("High")} className={`font-bold  min-w-[60px] rounded-lg  p-2 relative ${priority === "High" ? "bg-[#ffa600ad] text-slate-200 before:bg-[#ffa600ad]  before:absolute before:h-1 before:w-full before:-bottom-3 before:left-0 before:rounded-lg" : "bg-[#00000038] text-white"}`}>High</button>
+                    <button type="button" onClick={() => setPriority("Medium")} className={`font-bold  min-w-[60px] rounded-lg   p-2 relative ${priority === "Medium" ? "bg-[#0051ffb1] text-slate-200 before:bg-[#0051ffb1]  before:absolute before:h-1 before:w-full before:-bottom-3 before:left-0 before:rounded-lg" : "bg-[#00000038] text-white"}`}>Medium</button>
+                    <button type="button" onClick={() => setPriority("Low")} className={`font-bold  min-w-[60px] rounded-lg   p-2 relative ${priority === "Low" ? "bg-[#008011b1] text-slate-200 before:bg-[#008011b1]  before:absolute before:h-1 before:w-full before:-bottom-3 before:left-0 before:rounded-lg" : "bg-[#00000038] text-white"}`}>Low</button>
                   </div>
                 </div>
 
                 <div className="flex flex-col w-full items-center gap-y-3 mt-10">
                   <label className="text-slate-200 font-normal text-xl">Category: {category}</label>
                   <div className="flex  gap-x-3">
-                    <button type="button" onClick={() => setCategory("Work")} className=" min-w-[60px] rounded-lg border p-2 text-slate-200">Work</button>
-                    <button type="button" onClick={() => setCategory("Personal")} className="min-w-[60px] rounded-lg border p-2 text-slate-200">Personal</button>
-                    <button type="button" onClick={() => setCategory("Errands")} className="min-w-[60px] rounded-lg border p-2 text-slate-200">Errands</button>
-                    <button type="button" onClick={() => setCategory("Groceries")} className="min-w-[60px] rounded-lg border p-2 text-slate-200">Groceries</button>
+                    <button type="button" onClick={() => setCategory("Work")} className={`min-w-[60px] rounded-lg border p-2 text-slate-200 relative ${category === "Work" && "before:bg-slate-200 before:absolute before:h-1 before:w-full before:-bottom-3 before:left-0 before:rounded-lg"}`}>Work</button>
+                    <button type="button" onClick={() => setCategory("Personal")} className={`min-w-[60px] rounded-lg border p-2 text-slate-200  relative ${category === "Personal" && "before:bg-slate-200 before:absolute before:h-1 before:w-full before:-bottom-3 before:left-0 before:rounded-lg"}`}>Personal</button>
+                    <button type="button" onClick={() => setCategory("Errands")} className={`min-w-[60px] rounded-lg border p-2 text-slate-200 relative ${category === "Errands" && "before:bg-slate-200 before:absolute before:h-1 before:w-full before:-bottom-3 before:left-0 before:rounded-lg"}`}>Errands</button>
+                    <button type="button" onClick={() => setCategory("Groceries")} className={`min-w-[60px] rounded-lg border p-2 text-slate-200 relative ${category === "Groceries" && "before:bg-slate-200 before:absolute before:h-1 before:w-full before:-bottom-3 before:left-0 before:rounded-lg"}`}>Groceries</button>
                   </div>
                 </div>
               </div>
