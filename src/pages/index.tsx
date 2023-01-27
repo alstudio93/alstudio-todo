@@ -2,7 +2,7 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import { api } from "../utils/api";
 import TodoItem from "../components/TodoItem";
-import { SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { CreateTodoSchema } from "../server/api/routers/todo";
 import { useEffect, useState } from "react";
 import Pagination from "../components/Pagination";
@@ -37,6 +37,9 @@ const Home: NextPage = () => {
       await client.todo.getTodos.invalidate();
     }
   });
+
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<CreateTodoSchema>();
+
 
   const createTodoHandler: SubmitHandler<CreateTodoSchema> = (data) => {
     createTodo({ ...data, priority, category })
