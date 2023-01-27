@@ -1,13 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai"
-import { CiEdit } from "react-icons/ci"
-import { CreateTodoSchema, EditTodoSchema } from '../server/api/routers/todo';
+import { EditTodoSchema } from '../server/api/routers/todo';
 import { api } from "../utils/api";
 import { useForm, SubmitHandler } from "react-hook-form"
-import { GrDuplicate } from "react-icons/gr"
-import { BsFillGearFill } from "react-icons/bs"
-import { MdOutlineClose } from "react-icons/md"
-
+import {
+    AiOutlinePlus, AiOutlineMinus, AiOutlineDelete,
+    BiArchiveIn, BsFillGearFill, CiEdit,
+    HiOutlineDuplicate, MdOutlineClose,
+} from "../utils/icons"
 
 const TodoItem: React.FC<{
     todo: EditTodoSchema;
@@ -33,10 +32,39 @@ const TodoItem: React.FC<{
             }
         }
 
-        const priorityCritical = todo.priority === "Critical" && "bg-[red]";
-        const priorityHigh = todo.priority === "High" && "bg-[orange]";
-        const priorityMedium = todo.priority === "Medium" && "bg-[blue]";
-        const priorityLow = todo.priority === "Low" && "bg-[green]";
+        const getBackgroundColor = (priority: string) => {
+            switch (priority) {
+                case "Critical":
+                    return "bg-[red]";
+                case "High":
+                    return "bg-[orange]";
+                case "Medium":
+                    return "bg-[blue]";
+                case "Low":
+                    return "bg-[green]";
+                default:
+                    return "";
+            }
+        }
+
+        const priorityBackgroundColor = getBackgroundColor(todo.priority);
+
+        const setCardPsuedoColor = (priority: string) => {
+            switch (priority) {
+                case "Critical":
+                    return "before:bg-[red]";
+                case "High":
+                    return "before:bg-[orange]";
+                case "Medium":
+                    return "before:bg-[blue]";
+                case "Low":
+                    return "before:bg-[green]";
+                default:
+                    return "";
+            }
+        }
+
+        const priorityPseudoColor = setCardPsuedoColor(todo.priority);
 
         const { mutate: updateTodo } = api.todo.updateTodo.useMutation({
             onSuccess: async () => {
@@ -47,10 +75,8 @@ const TodoItem: React.FC<{
         });
 
         const handleUpdateTodo: SubmitHandler<EditTodoSchema> = (data) => {
-            const { title, note, category, completed } = data;
             const id = todo?.id
-
-            updateTodo({ title, note, category, completed, id })
+            updateTodo({ ...data, id })
         }
 
         const { mutate: duplicateTodo } = api.todo.duplicateTodo.useMutation({
@@ -78,22 +104,19 @@ const TodoItem: React.FC<{
             deleteTodo({ id })
         }
 
-        const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<EditTodoSchema>();
+        const { register, handleSubmit, setValue, formState: { errors } } = useForm<EditTodoSchema>();
         useEffect(() => {
             setValue("title", todo.title);
             setValue("note", todo?.note);
             setValue("category", todo?.category);
         }, [todo.title, todo?.note, setValue]);
 
-        const todoClosedPseudoBeforeStyles = `${priorityCritical && "before:bg-[red]"} ${priorityHigh && "before:bg-[orange]"}
-        ${priorityMedium && "before:bg-[blue]"} ${priorityLow && "before:bg-[green]"} ${todoState === "open" && "before:hidden"}`
-
-
         return (
             <>
                 <div className={`p-3 w-full rounded-lg mb-8 relative 
                 before:absolute before:h-full before:rounded-lg before:w-2 before:top-0 before:left-0 
-                ${todoClosedPseudoBeforeStyles}`}>
+                ${priorityPseudoColor} ${todoState === "open" && "before:hidden"}`}>
+
 
                     <div className={`flex flex-col  ${todoState === "open" ? "" : ""}`}>
                         <button
@@ -105,17 +128,24 @@ const TodoItem: React.FC<{
                             {todoState === "open" && <AiOutlineMinus className='text-white absolute top-1 right-2' />}
                         </button>
 
-                        <div className={` mt-5 relative rounded-lg bg-[#00000037] ${todoState === "open" ? "block" : "hidden"}`} >
-                            <div className={`${priorityCritical || priorityHigh || priorityMedium || priorityLow} h-2 w-full rounded-t-full`} />
-                            {showOptions && <div className="text-white absolute top-0 left-0 w-full h-full rounded-lg bg-black z-10 flex flex-col justify-center items-center gap-y-5 p-3">
-                                <MdOutlineClose className="absolute top-2 right-3 text-white text-2xl cursor-pointer" onClick={() => setShowOptions(false)} />
-                                <button>Archive</button>
-                                <button onClick={handleDuplicateTodo}>Duplicate</button>
-                                <button onClick={handleDeleteTodo}>Delete</button>
-                            </div>}
-                            <form className="p-3 relative" onSubmit={handleSubmit(handleUpdateTodo)}>
-                                <div className='flex justify-between items-start'>
-                                    <div>
+                        <div className={` mt-5 relative rounded-lg bg-[#18202F] ${todoState === "open" ? "block" : "hidden"}`}>
+                            <div className={`${priorityBackgroundColor} h-2 w-full rounded-t-full`} />
+                            <button aria-flowto='settingsClose' type="button" onClick={() => setShowOptions(true)} className='absolute top-5 right-3 z-10'>
+                                <BsFillGearFill
+                                    className="text-white text-lg "
+                                />
+                            </button>
+                            {showOptions && <div className="text-white absolute top-0 left-0 w-full h-full rounded-lg bg-[#18202F] z-10 flex flex-col justify-center items-center gap-y-5 p-3">
+                                <button id="settingsClose" onClick={() => setShowOptions(false)} className="absolute top-2 right-3"><MdOutlineClose className=" text-white text-2xl" /></button>
+                                <button className="flex  gap-x-2 items-center justify-between w-[100px]">Archive <BiArchiveIn /></button>
+                                <button className="flex  gap-x-2 items-center justify-between w-[100px]" onClick={handleDuplicateTodo}>Duplicate <HiOutlineDuplicate className="text-slate-200" /></button>
+                                <button className="flex  gap-x-2 items-center justify-between w-[100px]" onClick={handleDeleteTodo}>Delete <AiOutlineDelete /></button>
+                            </div>
+                            }
+
+                            <form className="p-3" onSubmit={handleSubmit(handleUpdateTodo)}>
+                                <div className='flex justify-between items-start relative'>
+                                    <div className="flex flex-col gap-y-1">
                                         <div className="text-white text-xl flex gap-x-2 items-center pr-3" onMouseOver={() => setShowEditIconForElement("todoTitle")} onMouseLeave={() => setShowEditIconForElement("")}>
                                             <h2
                                                 className={`text-xl text-slate-200 ${elementToEdit === "todoTitle" ? "hidden" : "block"}`}
@@ -150,7 +180,7 @@ const TodoItem: React.FC<{
                                                 <p
                                                     tabIndex={0}
                                                     onFocus={() => setShowEditIconForElement("todoCategory")}
-                                                    className={`text-slate-200 ${elementToEdit === "todoCategory" ? "hidden" : "block"}`}
+                                                    className={`text-slate-200 text-sm ${elementToEdit === "todoCategory" ? "hidden" : "block"}`}
                                                 >Category: <span>{todo.category}</span>
                                                 </p>
 
@@ -181,8 +211,9 @@ const TodoItem: React.FC<{
                                                 <p
                                                     tabIndex={0}
                                                     onFocus={() => setShowEditIconForElement("todoPriority")}
-                                                    className={`text-slate-200 ${elementToEdit === "todoPriority" ? "hidden" : "block"}`}
-                                                >Priority: <span>{todo.priority}</span>
+                                                    className={`text-slate-200 text-sm ${elementToEdit === "todoPriority" ? "hidden" : "block"}`}
+                                                >
+                                                    Priority: <span>{todo.priority}</span>
                                                 </p>
 
                                                 {/* TODO: Press escape to cancel editing */}
@@ -208,10 +239,6 @@ const TodoItem: React.FC<{
                                         </div>
 
                                     </div>
-                                    <BsFillGearFill
-                                        onClick={() => setShowOptions(true)}
-                                        className="text-white text-lg cursor-pointer"
-                                    />
                                 </div>
 
                                 {
@@ -220,7 +247,7 @@ const TodoItem: React.FC<{
                                         <p
                                             tabIndex={0}
                                             onFocus={() => setShowEditIconForElement("todoNote")}
-                                            className={`text-slate-200 py-2 pr-3  ${elementToEdit === "todoNote" ? "hidden" : "block"}`}
+                                            className={`text-slate-200 py-2 pr-3 w-[375px]  ${elementToEdit === "todoNote" ? "hidden" : "block"}`}
                                             ref={noteRef}>
                                             {todo?.note}
                                         </p>
@@ -229,7 +256,8 @@ const TodoItem: React.FC<{
                                             <textarea
                                                 {...register("note")}
                                                 defaultValue={todo?.note}
-                                                className='bg-transparent text-slate-200 py-2 pr-3 mt-5 w-[350px]' />}
+                                                rows={4}
+                                                className='bg-transparent text-slate-200 py-2 pr-3 mt-5 w-[375px]' />}
                                         {showEditIconForElement === "todoNote" && <button type="button" onClick={() => setElementToEdit("todoNote")}><CiEdit className="cursor-pointer text-2xl text-slate-200 " /></button>}
                                     </div>
                                 }
@@ -242,6 +270,7 @@ const TodoItem: React.FC<{
                                     <button type="submit" className="text-sm text-white text-right">Update</button>
                                 </div>
                             </form>
+
                         </div>
                     </div>
                 </div>
