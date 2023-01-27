@@ -18,6 +18,7 @@ model Todo {
     note      String?
     priority  Priority
     category  Category
+    completed Boolean
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }

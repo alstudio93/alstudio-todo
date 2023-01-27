@@ -56,8 +56,6 @@ const Home: NextPage = () => {
     }
   }, [todo, currentPage, sortState, searchQuery]);
 
-  console.log(todoData)
-
   return (
     <div className="bg-slate-800">
       <Head>
@@ -71,21 +69,21 @@ const Home: NextPage = () => {
         <div className="flex max-w-7xl w-full gap-x-10">
 
           {/* Create TASK Column */}
-          <div className="flex-1   shadow-xl rounded-lg mt-10 py-10 flex flex-col items-center overflow-y-auto ">
+          <div className="flex-1   shadow-xl rounded-lg mt-10 py-10 flex flex-col items-center overflow-y-auto font-quicksand ">
             <div className="flex flex-col items-center">
               <h2 className="text-slate-100 text-center text-xl">Create TODO</h2>
               <div className="flex flex-col gap-x-20 items-center col-span-2">
-                <div className="flex flex-col gap-y-3 mt-10 font-nunito font-semibold w-full items-center">
+                <div className="flex flex-col gap-y-3 mt-10 w-full items-center">
                   <label className="text-slate-200 font-normal text-xl">Priority: {priority}</label>
                   <div className="flex  gap-x-3">
-                    <button type="button" onClick={() => setPriority("CRITICAL")} className="font-quicksand  min-w-[60px] rounded-lg bg-[red] p-2">Critical</button>
-                    <button type="button" onClick={() => setPriority("HIGH")} className="font-quicksand min-w-[60px] rounded-lg bg-[orange] p-2">High</button>
-                    <button type="button" onClick={() => setPriority("MEDIUM")} className="font-quicksand min-w-[60px] rounded-lg bg-[blue] p-2">Medium</button>
-                    <button type="button" onClick={() => setPriority("LOW")} className="font-quicksand min-w-[60px] rounded-lg bg-[green] p-2">Low</button>
+                    <button type="button" onClick={() => setPriority("CRITICAL")} className=" font-bold  min-w-[60px] rounded-lg bg-[red] p-2">Critical</button>
+                    <button type="button" onClick={() => setPriority("HIGH")} className="font-bold  min-w-[60px] rounded-lg bg-[orange] p-2">High</button>
+                    <button type="button" onClick={() => setPriority("MEDIUM")} className="font-bold  min-w-[60px] rounded-lg bg-[blue] p-2">Medium</button>
+                    <button type="button" onClick={() => setPriority("LOW")} className="font-bold  min-w-[60px] rounded-lg bg-[green] p-2">Low</button>
                   </div>
                 </div>
 
-                <div className="flex flex-col w-full items-center gap-y-3 mt-10 font-nunito">
+                <div className="flex flex-col w-full items-center gap-y-3 mt-10">
                   <label className="text-slate-200 font-normal text-xl">Category: {category}</label>
                   <div className="flex  gap-x-3">
                     <button type="button" onClick={() => setCategory("Work")} className=" min-w-[60px] rounded-lg border p-2 text-slate-200">Work</button>
@@ -131,8 +129,8 @@ const Home: NextPage = () => {
                 <option value="default">Sort By</option>
                 <option>Title A-Z</option>
                 <option>Title Z-A</option>
-                <option>Created Asc</option>
-                <option>Created Desc</option>
+                {/* <option>Created Asc</option>
+                <option>Created Desc</option> */}
               </select>
             </div>
             {
@@ -142,11 +140,11 @@ const Home: NextPage = () => {
                 )
               })
             }
-            <Pagination
+            {totalPages <= 1 && <Pagination
               currentPage={currentPage}
               totalPages={totalPages}
               onPageChange={setCurrentPage}
-            />
+            />}
           </div>
         </div>
       </main>
