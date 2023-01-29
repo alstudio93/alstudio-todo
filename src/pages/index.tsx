@@ -154,7 +154,7 @@ const Home: NextPage = () => {
         setNoResults(false)
 
         // Divide the results by 5, round up to the nearest whole number, and store the result in the variable.
-        let totalPages = Math.ceil(filteredData.length / resultsPerPage);
+        const totalPages = Math.ceil(filteredData.length / resultsPerPage);
 
         // update the totalPages state
         setTotalPages(totalPages);
@@ -166,7 +166,7 @@ const Home: NextPage = () => {
         }
       }
 
-      let data = filteredData.slice((currentPage - 1) * resultsPerPage, currentPage * resultsPerPage);
+      const data = filteredData.slice((currentPage - 1) * resultsPerPage, currentPage * resultsPerPage);
 
       // if (sortState === "Title A-Z") {
       //   data = data.sort((a, b) => a.title.localeCompare(b.title));
