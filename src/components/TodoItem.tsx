@@ -209,6 +209,38 @@ const TodoItem: React.FC<{
                                             }
                                         </div>
 
+                                        <div className="flex flex-col">
+                                            <div className={`flex gap-x-2`} onMouseOver={() => setShowEditIconForElement("todoPriority")} onMouseLeave={() => setShowEditIconForElement("")}>
+                                                <p
+                                                    tabIndex={0}
+                                                    onFocus={() => setShowEditIconForElement("todoPriority")}
+                                                    className={`text-slate-200 text-sm ${isEditing ? "hidden" : "block"}`}
+                                                >
+                                                    Priority: <span>{todo.priority}</span>
+                                                </p>
+
+                                                {/* TODO: Press escape to cancel editing */}
+                                                {isEditing &&
+                                                    <fieldset className="flex gap-x-2 items-center">
+                                                        <label className='text-slate-200'>Priority:</label>
+                                                        <input
+                                                            defaultValue={todo?.priority}
+                                                            name="priority"
+                                                            {...register("priority")}
+                                                            className='text-slate-200 bg-transparent w-[100px]'
+                                                        />
+                                                    </fieldset>
+                                                }
+                                                {showEditIconForElement === "todoPriority" &&
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setIsEditing(true)}>
+                                                        <CiEdit className="cursor-pointer text-white" />
+                                                    </button>
+                                                }
+                                            </div>
+                                        </div>
+
 
                                         <div className="flex flex-col">
                                             <div className={`flex gap-x-2`} onMouseOver={() => setShowEditIconForElement("todoCategory")} onMouseLeave={() => setShowEditIconForElement("")}>
@@ -241,37 +273,7 @@ const TodoItem: React.FC<{
                                             </div>
                                         </div>
 
-                                        <div className="flex flex-col">
-                                            <div className={`flex gap-x-2`} onMouseOver={() => setShowEditIconForElement("todoPriority")} onMouseLeave={() => setShowEditIconForElement("")}>
-                                                <p
-                                                    tabIndex={0}
-                                                    onFocus={() => setShowEditIconForElement("todoPriority")}
-                                                    className={`text-slate-200 text-sm ${isEditing ? "hidden" : "block"}`}
-                                                >
-                                                    Priority: <span>{todo.priority}</span>
-                                                </p>
 
-                                                {/* TODO: Press escape to cancel editing */}
-                                                {isEditing &&
-                                                    <fieldset className="flex gap-x-2 items-center">
-                                                        <label className='text-slate-200'>Priority:</label>
-                                                        <input
-                                                            defaultValue={todo?.priority}
-                                                            name="priority"
-                                                            {...register("priority")}
-                                                            className='text-slate-200 bg-transparent w-[100px]'
-                                                        />
-                                                    </fieldset>
-                                                }
-                                                {showEditIconForElement === "todoPriority" &&
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setIsEditing(true)}>
-                                                        <CiEdit className="cursor-pointer text-white" />
-                                                    </button>
-                                                }
-                                            </div>
-                                        </div>
 
                                     </div>
                                 </div>

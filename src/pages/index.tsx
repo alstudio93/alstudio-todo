@@ -19,18 +19,25 @@ const Home: NextPage = () => {
   // Fetch TODO's from backend
   const { data: todo } = api.todo?.getTodos.useQuery();
 
+  const [priority, setPriority] = useState<"Critical" | "High" | "Medium" | "Low">("Critical");
+  const [category, setCategory] = useState<"Work" | "Personal" | "Errands" | "Groceries">("Work");
+
+  // React-Hook-Form
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<CreateTodoSchema>();
+
   // API Call to create a new TODO
   const { mutate: createTodo } = api.todo.createTodo.useMutation({
     onSuccess: async () => {
       await client.todo.getTodos.invalidate();
+      reset();
+      setPriority("Critical")
+      setCategory("Work")
     }
   });
 
 
   const [helpMenu, setHelpMenu] = useState("closed");
 
-  const [priority, setPriority] = useState<"Critical" | "High" | "Medium" | "Low">("Critical");
-  const [category, setCategory] = useState<"Work" | "Personal" | "Errands" | "Groceries">("Work");
 
   // Collapse All 
   const [collapseAll, setCollapseAll] = useState(false);
@@ -61,6 +68,7 @@ const Home: NextPage = () => {
   const { mutate: deleteManyTodos } = api.todo.deleteManyTodos.useMutation({
     onSuccess: async () => {
       await client.todo.getTodos.invalidate();
+      setToBeDeleted([])
     },
     onError: (e) => console.log(e.message)
   });
@@ -69,15 +77,10 @@ const Home: NextPage = () => {
     deleteManyTodos({ ids: toBeDeleted })
   }
 
-
-  // React-Hook-Form
-  const { register, handleSubmit, formState: { errors } } = useForm<CreateTodoSchema>();
-
   // Submit Handler Function that takes in data from react-hook-form and passes the data to the tRPC createTodo({}) function.
   const createTodoHandler: SubmitHandler<CreateTodoSchema> = (data) => {
     createTodo({ ...data, priority, category })
   }
-
 
   useEffect(() => {
     // Fetch the data and search / sort
@@ -322,10 +325,14 @@ const Home: NextPage = () => {
             </div>
 
             <div className="flex flex-col h-full w-full py-5 relative">
-              <p className="text-slate-200"> {todo?.length} Todo Items</p>
-              <div className="flex gap-x-3 items-center justify-end">
-                {<button onClick={() => { setCollapseAll(true); setStartingBulkDelete(!startingBulkDelete); setToBeDeleted([]) }} className="text-slate-200 w-fit" >{startingBulkDelete ? "Cancel Delete" : "Bulk Delete"}</button>}
-                <button onClick={() => setCollapseAll(true)} className="text-slate-200 w-fit" >Collapse All</button>
+
+              <div className="flex gap-x-3 items-center justify-between pb-5">
+                <p className="text-slate-200"> {todo?.length} Todo Items</p>
+                <div className="flex gap-x-2 items-center">
+                  {<button onClick={() => { setCollapseAll(true); setStartingBulkDelete(!startingBulkDelete); setToBeDeleted([]) }} className="text-slate-200 w-fit" >{startingBulkDelete ? "Cancel Delete" : "Bulk Delete"}</button>}
+                  <button onClick={() => setCollapseAll(true)} className="text-slate-200 w-fit" >Collapse All</button>
+                </div>
+
               </div>
               {todoData?.length === 0 ? <p className="text-slate-200">No Results Found...</p> :
                 todoData?.map((todo) => {
