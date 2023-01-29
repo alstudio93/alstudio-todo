@@ -3,73 +3,212 @@ import Head from "next/head";
 import { api } from "../utils/api";
 import TodoItem from "../components/TodoItem";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { CreateTodoSchema } from "../server/api/routers/todo";
+import { CreateTodoSchema, TodoSchema } from "../server/api/routers/todo";
 import { useEffect, useState } from "react";
 import Pagination from "../components/Pagination";
 import CreateTodoForm from "../components/CreateTodoForm";
 import { BiHelpCircle, MdOutlineClose } from "../utils/icons"
 
 // TODO -- Maybe create export as JSON / CSV file?
-
+// TODO Archive (soft delete)
 
 const Home: NextPage = () => {
 
   const client = api.useContext();
+
+  // Fetch TODO's from backend
   const { data: todo } = api.todo?.getTodos.useQuery();
 
-  const [helpMenu, setHelpMenu] = useState("closed");
-
-  const [todoData, setTodoData] = useState(todo);
-  const [sortState, setSortState] = useState<string>("");
-
-
-  const [searchQuery, setSearchQuery] = useState<string>("");
-
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const resultsPerPage = 5;
-  const totalPages = Math.ceil(todo?.length / resultsPerPage);
-
-  const [priority, setPriority] = useState<"Critical" | "High" | "Medium" | "Low">("Critical");
-  const [category, setCategory] = useState<"Work" | "Personal" | "Errands" | "Groceries">("Work");
-
+  // API Call to create a new TODO
   const { mutate: createTodo } = api.todo.createTodo.useMutation({
     onSuccess: async () => {
       await client.todo.getTodos.invalidate();
     }
   });
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<CreateTodoSchema>();
+
+  const [helpMenu, setHelpMenu] = useState("closed");
+
+  const [priority, setPriority] = useState<"Critical" | "High" | "Medium" | "Low">("Critical");
+  const [category, setCategory] = useState<"Work" | "Personal" | "Errands" | "Groceries">("Work");
+
+  // Collapse All 
+  const [collapseAll, setCollapseAll] = useState(false);
+
+  // Store the todo fetched from api and store it in todoData
+  const [todoData, setTodoData] = useState<TodoSchema[]>(todo);
+
+  // store the form option value in the sortState
+  const [sortState, setSortState] = useState<string>("");
+
+  // store the search input value in the searchQuery
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  // Set the default currentPage for the pagination to 1
+  const [currentPage, setCurrentPage] = useState<number>(1);
+
+  // Control the number of results per page
+  const resultsPerPage = 5;
+
+  // Set the default total number of pages
+  const [totalPages, setTotalPages] = useState<number>(0)
+
+  const [noResults, setNoResults] = useState<boolean>(false);
+
+  const [startingBulkDelete, setStartingBulkDelete] = useState(false);
+  const [toBeDeleted, setToBeDeleted] = useState<string[]>([]);
+
+  const { mutate: deleteManyTodos } = api.todo.deleteManyTodos.useMutation({
+    onSuccess: async () => {
+      await client.todo.getTodos.invalidate();
+    },
+    onError: (e) => console.log(e.message)
+  });
+
+  const handleDeleteManyTodos = () => {
+    deleteManyTodos({ ids: toBeDeleted })
+  }
 
 
+  // React-Hook-Form
+  const { register, handleSubmit, formState: { errors } } = useForm<CreateTodoSchema>();
+
+  // Submit Handler Function that takes in data from react-hook-form and passes the data to the tRPC createTodo({}) function.
   const createTodoHandler: SubmitHandler<CreateTodoSchema> = (data) => {
     createTodo({ ...data, priority, category })
   }
 
-  // Archive (soft delete)
 
   useEffect(() => {
     // Fetch the data and search / sort
+
+    // First check to see if a todo exists and if so, execute logic
     if (todo) {
-      const filteredData = todo?.filter(todo => {
+
+      // filter through the todo and store matching data in the filteredData variable 
+      let filteredData = todo?.filter(todo => {
         return todo.title.toLowerCase().includes(searchQuery.toLowerCase())
           || todo.category.toLowerCase().includes(searchQuery.toLowerCase())
           || todo.priority.toLowerCase().includes(searchQuery.toLowerCase())
       });
+
+      const priorityMap = {
+        "Critical": 1,
+        "High": 2,
+        "Medium": 3,
+        "Low": 4
+      };
+
+      // sort the filtered data
+      if (sortState === "Title A-Z") {
+        filteredData = filteredData.sort((a, b) => a.title.localeCompare(b.title));
+      }
+
+      else if (sortState === "Title Z-A") {
+        filteredData = filteredData.sort((a, b) => b.title.localeCompare(a.title));
+      }
+
+      else if (sortState === "Priority High") {
+        filteredData = filteredData.sort((a, b) => priorityMap[a.priority] - priorityMap[b.priority])
+      }
+
+      else if (sortState === "Priority Low") {
+        filteredData = filteredData.sort((a, b) => priorityMap[b.priority] - priorityMap[a.priority]);
+      }
+
+      else if (sortState === "Created Asc") {
+        filteredData = filteredData.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+      }
+
+      else if (sortState === "Created Desc") {
+        filteredData = filteredData.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      }
+
+      else if (sortState === "Completed") {
+        filteredData = filteredData.sort((a, b) => {
+          if (a.completed === b.completed) {
+            return 0;
+          }
+          else if (a.completed === true) {
+            return -1;
+          }
+          else {
+            return 1;
+          }
+        });
+      }
+
+      if (filteredData.length === 0) {
+
+        // A couple of options here. 
+        // You can set noResults to true and hide the pagination.
+        // You can set the current and total pages to 1 so that the user reads 1 of 1.
+        // You can do both so that even though the user cannot see the pagination if there no results, but the logic is still sound.
+
+        setNoResults(true)
+        // setCurrentPage(1);
+        // setTotalPages(1);
+      }
+      else {
+        // If there are results, then set noResults back to false.
+        setNoResults(false)
+
+        // Divide the results by 5, round up to the nearest whole number, and store the result in the variable.
+        let totalPages = Math.ceil(filteredData.length / resultsPerPage);
+
+        // update the totalPages state
+        setTotalPages(totalPages);
+
+        // Check if current page is greater than total pages
+        // We use this check for when we are on, say, page 5, but the results only occupy page 1. Therefore, we are taken back to page one rather than seeing empty pages.
+        if (currentPage > totalPages) {
+          setCurrentPage(1);
+        }
+      }
+
       let data = filteredData.slice((currentPage - 1) * resultsPerPage, currentPage * resultsPerPage);
 
-      if (sortState === "Title A-Z") {
-        data = data.sort((a, b) => a.title.localeCompare(b.title));
-      } else if (sortState === "Title Z-A") {
-        data = data.sort((a, b) => b.title.localeCompare(a.title));
-      } else if (sortState === "Priority High") {
-        data = data.sort((a, b) => a.priority.localeCompare(b.priority))
-      }
-      else if (sortState === "Priority Low") {
-        data = data.sort((a, b) => b.priority.localeCompare(a.priority))
-      }
+      // if (sortState === "Title A-Z") {
+      //   data = data.sort((a, b) => a.title.localeCompare(b.title));
+      // }
+
+      // else if (sortState === "Title Z-A") {
+      //   data = data.sort((a, b) => b.title.localeCompare(a.title));
+      // }
+
+      // else if (sortState === "Priority High") {
+      //   data = data.sort((a, b) => a.priority.localeCompare(b.priority))
+      // }
+
+      // else if (sortState === "Priority Low") {
+      //   data = data.sort((a, b) => b.priority.localeCompare(a.priority))
+      // }
+
+      // else if (sortState === "Created Asc") {
+      //   data = data.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+      // }
+
+      // else if (sortState === "Created Desc") {
+      //   data = data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      // }
+
+      // else if (sortState === "Completed") {
+      //   data = data.sort((a, b) => {
+      //     if (a.completed === b.completed) {
+      //       return 0;
+      //     }
+      //     else if (a.completed === true) {
+      //       return -1;
+      //     }
+      //     else {
+      //       return 1;
+      //     }
+      //   });
+      // }
+
       setTodoData(data);
     }
-  }, [todo, currentPage, sortState, searchQuery]);
+  }, [todo, currentPage, sortState, searchQuery,]);
 
   return (
     <div className="bg-slate-800">
@@ -138,7 +277,7 @@ const Home: NextPage = () => {
                 <textarea {...register("note")} id="optionalNote" className="border bg-transparent text-white p-2 rounded-lg " />
               </fieldset>
 
-              <button type="submit" className="border w-full p-2 text-slate-200 rounded-lg col-span-2" >Create Your TODO</button>
+              <button type="submit" className="border w-full p-2 text-slate-200 rounded-lg col-span-2"  >Create Your TODO</button>
 
             </form>
           </div>
@@ -157,7 +296,8 @@ const Home: NextPage = () => {
                   <li>Speed up your TODO creation with duplication!</li>
                   <li>Archive Your TODO item. This will help with clutter, and if you want to restore it back to your main list, you can also do that!</li>
                   <li>Search by any property that is attached to your card (title, category, priority, etc...)</li>
-                  <li>Efficient Sorting</li>
+                  <li>Sort by Title, Priority, Date of Creation, and Completion</li>
+                  <li>Bulk Delete</li>
                 </ul>
               </div>
             </div>}
@@ -167,32 +307,47 @@ const Home: NextPage = () => {
                 <button type="button" onClick={() => setHelpMenu("open")} > <BiHelpCircle className="text-slate-200 text-2xl" /></button>
               </div>
               <div className="flex items-center justify-between w-full">
-                <input placeholder='' onChange={(e) => setSearchQuery(e.target.value)} type="search" className='p-2 rounded-lg  font-nunito focus:p-2 focus:pl-2 shadow-lg' />
+                <input placeholder='Start typing...' onChange={(e) => setSearchQuery(e.target.value)} type="search" className='p-2 rounded-lg  font-nunito focus:p-2 focus:pl-2 shadow-lg' />
                 <select className="bg-slate-300 p-2 cursor-pointer mt-5 rounded-lg mb-6" onChange={(e) => setSortState(e.target.value)}>
-                  <option value="default">Sort By</option>
+                  <option value="default">Default</option>
                   <option>Title A-Z</option>
                   <option>Title Z-A</option>
                   <option>Priority High</option>
                   <option>Priority Low</option>
-                  {/* <option>Created Asc</option>
-                <option>Created Desc</option> */}
+                  <option>Created Asc</option>
+                  <option>Created Desc</option>
+                  <option>Completed</option>
                 </select>
               </div>
             </div>
 
-            <div className="flex flex-col h-full w-full pt-5">
-              {
+            <div className="flex flex-col h-full w-full py-5 relative">
+              <p className="text-slate-200"> {todo?.length} Todo Items</p>
+              <div className="flex gap-x-3 items-center justify-end">
+                {<button onClick={() => { setCollapseAll(true); setStartingBulkDelete(!startingBulkDelete); setToBeDeleted([]) }} className="text-slate-200 w-fit" >{startingBulkDelete ? "Cancel Delete" : "Bulk Delete"}</button>}
+                <button onClick={() => setCollapseAll(true)} className="text-slate-200 w-fit" >Collapse All</button>
+              </div>
+              {todoData?.length === 0 ? <p className="text-slate-200">No Results Found...</p> :
                 todoData?.map((todo) => {
                   return (
-                    <TodoItem key={todo.id} todo={todo} />
+                    <TodoItem
+                      key={todo.id}
+                      todo={todo}
+                      collapseAll={collapseAll}
+                      setCollapseAll={setCollapseAll}
+                      startingBulkDelete={startingBulkDelete}
+                      setToBeDeleted={setToBeDeleted}
+                      toBeDeleted={toBeDeleted}
+                    />
                   )
                 })
               }
+              {toBeDeleted.length > 0 && <button className="text-slate-200 border p-2 rounded-lg w-[200px] mx-auto" onClick={handleDeleteManyTodos}>Delete {toBeDeleted.length} Tasks</button>}
             </div>
-            {<Pagination
+            {noResults ? null : <Pagination
               currentPage={currentPage}
               totalPages={totalPages}
-              onPageChange={setCurrentPage}
+              setCurrentPage={setCurrentPage}
             />}
           </div>
         </div>

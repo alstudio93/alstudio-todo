@@ -2,9 +2,21 @@ import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
-
 export const todoSchema = z.object({
-    id: z.string().optional(),
+    id: z.string(),
+    title: z.string(),
+    dueDate: z.string().nullable(),
+    note: z.string().nullable(),
+    priority: z.enum(["Critical", "High", "Medium", "Low"]),
+    category: z.enum(["Work", "Personal", "Errands", "Groceries"]),
+    completed: z.boolean(),
+    createdAt: z.date(),
+})
+export type TodoSchema = z.TypeOf<typeof todoSchema>
+
+
+
+export const createTodoSchema = z.object({
     title: z.string(),
     dueDate: z.string().nullable(),
     note: z.string().nullable(),
@@ -13,7 +25,7 @@ export const todoSchema = z.object({
 })
 
 
-export type CreateTodoSchema = z.TypeOf<typeof todoSchema>
+export type CreateTodoSchema = z.TypeOf<typeof createTodoSchema>
 
 export const editTodoSchema = z.object({
     id: z.string().optional(),
@@ -31,7 +43,11 @@ export type EditTodoSchema = z.TypeOf<typeof editTodoSchema>
 export const todoRouter = createTRPCRouter({
     getTodos: publicProcedure.query(async ({ ctx }) => {
         try {
-            const todos = await ctx.prisma.todo.findMany();
+            const todos = await ctx.prisma.todo.findMany({
+                orderBy: {
+                    createdAt: "desc"
+                }
+            });
             return todos;
         } catch (error) {
             console.error(error);
@@ -39,7 +55,7 @@ export const todoRouter = createTRPCRouter({
     }),
 
     createTodo: publicProcedure
-        .input(todoSchema)
+        .input(createTodoSchema)
         .mutation(({ ctx, input }) => {
             const todo = ctx.prisma.todo.create({
                 data: {
@@ -96,11 +112,22 @@ export const todoRouter = createTRPCRouter({
     deleteTodo: publicProcedure
         .input(z.object({ id: z.string() }))
         .mutation(async ({ ctx, input }) => {
-            const todo = await ctx.prisma.todo.delete({
+            await ctx.prisma.todo.delete({
                 where: {
                     id: input.id
                 }
             })
+        }),
+    deleteManyTodos: publicProcedure
+        .input(z.object({ ids: z.array(z.string()) }))
+        .mutation(async ({ ctx, input }) => {
+            await ctx.prisma.todo.deleteMany({
+                where: {
+                    id: {
+                        in: input.ids
+                    }
+                }
+            });
         })
 
 });
