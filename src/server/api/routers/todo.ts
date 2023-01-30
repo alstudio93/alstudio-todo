@@ -9,6 +9,7 @@ export const todoSchema = z.object({
     note: z.string().nullable(),
     priority: z.enum(["Critical", "High", "Medium", "Low"]),
     category: z.enum(["Work", "Personal", "Errands", "Groceries"]),
+    archived: z.boolean(),
     completed: z.boolean(),
     createdAt: z.date(),
 })
@@ -34,7 +35,8 @@ export const editTodoSchema = z.object({
     note: z.string().nullable().optional(),
     priority: z.enum(["Critical", "High", "Medium", "Low"]).optional(),
     category: z.enum(["Work", "Personal", "Errands", "Groceries"]).optional(),
-    completed: z.boolean(),
+    archived: z.boolean(),
+    completed: z.boolean().optional(),
 })
 
 
@@ -44,11 +46,29 @@ export const todoRouter = createTRPCRouter({
     getTodos: publicProcedure.query(async ({ ctx }) => {
         try {
             const todos = await ctx.prisma.todo.findMany({
+                where: {
+                    archived: false,
+                },
                 orderBy: {
                     createdAt: "desc"
                 }
             });
             return todos;
+        } catch (error) {
+            console.error(error);
+        }
+    }),
+    getArchivedTodos: publicProcedure.query(async ({ ctx }) => {
+        try {
+            const archivedTodos = await ctx.prisma.todo.findMany({
+                where: {
+                    archived: true,
+                },
+                orderBy: {
+                    title: "asc"
+                }
+            });
+            return archivedTodos;
         } catch (error) {
             console.error(error);
         }
@@ -83,6 +103,7 @@ export const todoRouter = createTRPCRouter({
                     note: input.note,
                     priority: input.priority,
                     category: input.category,
+                    archived: input.archived,
                     completed: input.completed
                 }
             })

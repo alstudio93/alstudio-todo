@@ -8,15 +8,15 @@ import {
     HiOutlineDuplicate, MdOutlineClose,
 } from "../utils/icons"
 import dayjs from 'dayjs';
-
+import { useRouter } from 'next/router';
 
 const TodoItem: React.FC<{
     todo: TodoSchema;
-    collapseAll: boolean;
-    setCollapseAll: React.Dispatch<React.SetStateAction<boolean>>;
-    startingBulkDelete: boolean;
-    toBeDeleted: string[];
-    setToBeDeleted: React.Dispatch<React.SetStateAction<string[]>>;
+    collapseAll?: boolean;
+    setCollapseAll?: React.Dispatch<React.SetStateAction<boolean>>;
+    startingBulkDelete?: boolean;
+    toBeDeleted?: string[];
+    setToBeDeleted?: React.Dispatch<React.SetStateAction<string[]>>;
 }> = ({
     todo,
     collapseAll,
@@ -25,12 +25,14 @@ const TodoItem: React.FC<{
     setToBeDeleted,
     toBeDeleted
 }) => {
+        const router = useRouter();
         const date = dayjs(todo.createdAt).format("ddd, MMM D, hh:m:ssa")
         const client = api.useContext();
-        const [todoState, setTodoState] = useState(false);
+
+        const [todoOpen, setTodoOpen] = useState(false);
         const [isEditing, setIsEditing] = useState(false);
 
-        const [isChecked, setIsChecked] = useState(false);
+        const [archived, setArchived] = useState(todo.archived === false);
 
         const [showEditIconForElement, setShowEditIconForElement] = useState("");
 
@@ -41,18 +43,18 @@ const TodoItem: React.FC<{
 
         useEffect(() => {
             if (collapseAll) {
-                setTodoState(false)
+                setTodoOpen(false)
             }
         }, [collapseAll])
 
         const setTodoExpanded = () => {
 
-            if (todoState === false) {
+            if (todoOpen === false) {
                 setCollapseAll(false);
-                setTodoState(true)
+                setTodoOpen(true)
             }
-            if (todoState === true) {
-                setTodoState(false)
+            if (todoOpen === true) {
+                setTodoOpen(false)
             }
         }
 
@@ -73,7 +75,7 @@ const TodoItem: React.FC<{
 
         const priorityBackgroundColor = getBackgroundColor(todo.priority);
 
-        const setCardPsuedoColor = (priority: string) => {
+        const handleCardPriorityColor = (priority: string) => {
             switch (priority) {
                 case "Critical":
                     return "before:bg-[red]";
@@ -88,7 +90,7 @@ const TodoItem: React.FC<{
             }
         }
 
-        const priorityPseudoColor = setCardPsuedoColor(todo.priority);
+        const priorityCardColor = handleCardPriorityColor(todo.priority);
 
         const { mutate: updateTodo } = api.todo.updateTodo.useMutation({
             onSuccess: async () => {
@@ -98,9 +100,15 @@ const TodoItem: React.FC<{
             onError: (e) => console.log(e.message)
         });
 
+        const handleArchiveTodo = () => {
+            const id = todo?.id;
+            setArchived(todo.archived === true);
+            updateTodo({ id, archived })
+        }
+
         const handleUpdateTodo: SubmitHandler<EditTodoSchema> = (data) => {
-            const id = todo?.id
-            updateTodo({ ...data, id })
+            const id = todo?.id;
+            updateTodo({ ...data, id, archived })
         }
 
         const { mutate: duplicateTodo } = api.todo.duplicateTodo.useMutation({
@@ -136,25 +144,27 @@ const TodoItem: React.FC<{
             setValue("category", todo?.category);
         }, [todo.title, todo?.note, setValue]);
 
+
+        const archivePage = router.pathname === "/archive";
+
         return (
             <>
                 <div className={`p-3 w-full rounded-lg mb-8 relative 
                 before:absolute before:h-full before:rounded-lg before:w-2 before:top-0 before:left-0 
-                ${priorityPseudoColor} ${todoState === true && "before:hidden"}`}>
+                ${priorityCardColor} ${todoOpen === true && "before:hidden"}`}>
 
 
-                    <div className={`flex flex-col  ${todoState === true ? "" : ""}`}>
+                    <div className={`flex flex-col`}>
                         <div className='flex gap-x-2 items-center'>
                             <button
                                 type="button"
                                 onClick={setTodoExpanded}
                                 className={`px-3 flex justify-between items-center text-xl text-left text-slate-200 font-nunito w-full relative ${todo?.completed === true && "line-through"}`}>
                                 {todo.title}
-                                {todoState === false && <AiOutlinePlus className='text-white' />}
-                                {todoState === true && <AiOutlineMinus className='text-white' />}
+                                {todoOpen === false && <AiOutlinePlus className='text-white' />}
+                                {todoOpen === true && <AiOutlineMinus className='text-white' />}
                             </button>
                             {startingBulkDelete && <input type="checkbox" className='cursor-pointer' onChange={(e) => {
-                                setIsChecked(e.target.checked);
                                 if (e.target.checked) {
                                     setToBeDeleted([...toBeDeleted, todo.id]);
                                 } else {
@@ -163,7 +173,7 @@ const TodoItem: React.FC<{
                             }} />}
                         </div>
 
-                        <div className={` mt-5 relative rounded-lg bg-[#18202F] ${todoState === true ? "block" : "hidden"}`}>
+                        <div className={` mt-5 relative rounded-lg bg-[#18202F] ${todoOpen === true ? "block" : "hidden"}`}>
                             <div className={`${priorityBackgroundColor} h-2 w-full rounded-t-full`} />
                             <button aria-flowto='settingsClose' type="button" onClick={() => setShowOptions(true)} className='absolute top-5 right-3 z-10'>
                                 <BsFillGearFill
@@ -172,8 +182,12 @@ const TodoItem: React.FC<{
                             </button>
                             {showOptions && <div className="text-white absolute top-0 left-0 w-full h-full rounded-lg bg-[#18202F] z-10 flex flex-col justify-center items-center gap-y-5 p-3">
                                 <button id="settingsClose" onClick={() => setShowOptions(false)} className="absolute top-2 right-3"><MdOutlineClose className=" text-white text-2xl" /></button>
-                                <button className="flex  gap-x-2 items-center justify-between w-[100px]">Archive <BiArchiveIn /></button>
-                                <button className="flex  gap-x-2 items-center justify-between w-[100px]" onClick={handleDuplicateTodo}>Duplicate <HiOutlineDuplicate className="text-slate-200" /></button>
+                                {!archivePage &&
+                                    <>
+                                        <button onClick={handleArchiveTodo} className="flex  gap-x-2 items-center justify-between w-[100px]">Archive <BiArchiveIn /></button>
+                                        <button className="flex  gap-x-2 items-center justify-between w-[100px]" onClick={handleDuplicateTodo}>Duplicate <HiOutlineDuplicate className="text-slate-200" /></button>
+                                    </>
+                                }
                                 <button className="flex  gap-x-2 items-center justify-between w-[100px]" onClick={handleDeleteTodo}>Delete <AiOutlineDelete /></button>
                             </div>
                             }
@@ -273,8 +287,6 @@ const TodoItem: React.FC<{
                                             </div>
                                         </div>
 
-
-
                                     </div>
                                 </div>
 
@@ -308,7 +320,6 @@ const TodoItem: React.FC<{
                                 </div>
                                 <small className="text-slate-200">{date}</small>
                             </form>
-                            {/* <button onClick={handleDeleteManyTodos}>Complete Bulk Delete</button> */}
                         </div>
                     </div>
                 </div>
