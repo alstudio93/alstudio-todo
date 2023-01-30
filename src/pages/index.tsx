@@ -226,11 +226,11 @@ const Home: NextPage = () => {
   // }, [])
 
 
-  // useEffect(() => {
-  //   window.localStorage.setItem("to-be-deleted", JSON.stringify(toBeDeleted));
-  //   window.localStorage.setItem("bulk-delete-is-active", JSON.stringify(startingBulkDelete));
-  //   window.localStorage.setItem("bulk-delete-options", JSON.stringify(bulkDeleteOptions));
-  // }, [toBeDeleted, startingBulkDelete, bulkDeleteOptions])
+  useEffect(() => {
+    window.localStorage.setItem("to-be-deleted", JSON.stringify(toBeDeleted));
+    window.localStorage.setItem("bulk-delete-is-active", JSON.stringify(startingBulkDelete));
+    window.localStorage.setItem("bulk-delete-options", JSON.stringify(bulkDeleteOptions));
+  }, [toBeDeleted, startingBulkDelete, bulkDeleteOptions])
 
   return (
     <Layout>
