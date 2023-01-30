@@ -67,6 +67,18 @@ const Home: NextPage = () => {
   const [toBeDeleted, setToBeDeleted] = useState<string[]>([]);
   const [bulkDeleteOptions, setBulkDeleteOptions] = useState<boolean>(false);
 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setStartingBulkDelete(JSON.parse(window.localStorage.getItem('starting-bulk-delete') || 'false'));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem('starting-bulk-delete', JSON.stringify(startingBulkDelete));
+    }
+  }, [startingBulkDelete]);
+
   const { mutate: deleteManyTodos } = api.todo.deleteManyTodos.useMutation({
     onSuccess: async () => {
       await client.todo.getTodos.invalidate();
@@ -216,21 +228,6 @@ const Home: NextPage = () => {
       setTodoData(data);
     }
   }, [todo, currentPage, sortState, searchQuery,]);
-
-
-
-  // useEffect(() => {
-  //   setToBeDeleted(JSON.parse(window.localStorage.getItem("to-be-deleted") || '[]'))
-  //   setStartingBulkDelete(JSON.parse(window.localStorage.getItem("bulk-delete-is-active")))
-  //   setBulkDeleteOptions(JSON.parse(window.localStorage.getItem("bulk-delete-options")))
-  // }, [])
-
-
-  useEffect(() => {
-    window.localStorage.setItem("to-be-deleted", JSON.stringify(toBeDeleted));
-    window.localStorage.setItem("bulk-delete-is-active", JSON.stringify(startingBulkDelete));
-    window.localStorage.setItem("bulk-delete-options", JSON.stringify(bulkDeleteOptions));
-  }, [toBeDeleted, startingBulkDelete, bulkDeleteOptions])
 
   return (
     <Layout>
