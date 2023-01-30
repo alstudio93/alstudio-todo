@@ -220,8 +220,12 @@ const Home: NextPage = () => {
 
 
   useEffect(() => {
-    return window.localStorage.setItem("to-be-deleted", JSON.stringify(toBeDeleted));
-  }, [toBeDeleted])
+    window.localStorage.setItem("to-be-deleted", JSON.stringify(toBeDeleted));
+    window.localStorage.setItem("bulk-delete-is-active", JSON.stringify(startingBulkDelete));
+    window.localStorage.setItem("bulk-delete-options", JSON.stringify(bulkDeleteOptions));
+
+
+  }, [toBeDeleted, startingBulkDelete, bulkDeleteOptions])
 
   return (
     <Layout>
