@@ -223,7 +223,7 @@ const Home: NextPage = () => {
         <div className="flex flex-col items-center xl:flex-row max-w-7xl w-full gap-x-10">
 
           {/* Create TASK Column */}
-          <div className="md:flex-1   shadow-xl rounded-lg mt-10 p-10 flex flex-col items-center overflow-y-auto font-quicksand md:max-h-[683px]">
+          <div className="md:flex-1 w-full shadow-xl rounded-lg mt-10 p-10 flex flex-col items-center overflow-y-auto font-quicksand md:max-h-[683px]">
             <div className="flex flex-col items-center">
 
               <h2 className="text-slate-100 text-center text-xl">Create TODO</h2>
