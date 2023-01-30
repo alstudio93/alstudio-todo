@@ -9,7 +9,6 @@ import Pagination from "../components/Pagination";
 import CreateTodoForm from "../components/CreateTodoForm";
 import { BiHelpCircle, MdOutlineClose } from "../utils/icons"
 import Layout from "../components/Layout";
-import useLocalStorageState from "../utils/hooks/useLocalStorage";
 
 const Home: NextPage = () => {
 
@@ -64,9 +63,9 @@ const Home: NextPage = () => {
 
   const [noResults, setNoResults] = useState<boolean>(false);
 
-  const [startingBulkDelete, setStartingBulkDelete] = useLocalStorageState<boolean>(isMounted && "bulk-delete-is-active", false);
-  const [toBeDeleted, setToBeDeleted] = useLocalStorageState<string[]>(isMounted && "to-be-deleted", []);
-  const [bulkDeleteOptions, setBulkDeleteOptions] = useLocalStorageState<boolean>(isMounted && "bulk-delete-options", false);
+  const [startingBulkDelete, setStartingBulkDelete] = useState<boolean>(false);
+  const [toBeDeleted, setToBeDeleted] = useState<string[]>([]);
+  const [bulkDeleteOptions, setBulkDeleteOptions] = useState<boolean>(false);
 
   const { mutate: deleteManyTodos } = api.todo.deleteManyTodos.useMutation({
     onSuccess: async () => {
@@ -220,11 +219,11 @@ const Home: NextPage = () => {
 
 
 
-  // useEffect(() => {
-  //   JSON.parse(window.localStorage.getItem("to-be-deleted") || '[]')
-  //   JSON.parse(window.localStorage.getItem("bulk-delete-is-active"))
-  //   JSON.parse(window.localStorage.getItem("bulk-delete-options"))
-  // }, [])
+  useEffect(() => {
+    setToBeDeleted(JSON.parse(window.localStorage.getItem("to-be-deleted") || '[]'))
+    setStartingBulkDelete(JSON.parse(window.localStorage.getItem("bulk-delete-is-active")))
+    setBulkDeleteOptions(JSON.parse(window.localStorage.getItem("bulk-delete-options")))
+  }, [])
 
 
   useEffect(() => {
