@@ -31,7 +31,7 @@ const Archive = () => {
                 <div className="min-h-[500px] pt-10">
                     <div className="flex gap-x-3 items-center justify-between pb-5">
                         <p className="text-slate-200"> {archivedTodos?.length} Archived Tasks</p>
-                        <div className="flex gap-x-2 items-center">
+                        <div className="flex flex-col gap-y-2 md:flex-row gap-x-2 items-center">
                             {<button onClick={() => { setCollapseAll(true); setStartingBulkDelete(!startingBulkDelete); setToBeDeleted([]) }} className="text-slate-200 w-fit" >{startingBulkDelete ? "Cancel Delete" : "Bulk Delete"}</button>}
                             <button onClick={() => setCollapseAll(true)} className="text-slate-200 w-fit" >Collapse All</button>
                         </div>

@@ -165,7 +165,7 @@ const TodoItem: React.FC<{
                             <button
                                 type="button"
                                 onClick={setTodoExpanded}
-                                className={`px-3 flex justify-between items-center text-xl text-left text-slate-200 font-nunito w-full relative ${todo?.completed === true && "line-through"}`}>
+                                className={`px-3 flex justify-between items-center  md:text-xl text-left text-slate-200 font-nunito w-full relative ${todo?.completed === true && "line-through"}`}>
                                 {todo.title}
                                 {todoOpen === false && <AiOutlinePlus className='text-white' />}
                                 {todoOpen === true && <AiOutlineMinus className='text-white' />}

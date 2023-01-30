@@ -220,10 +220,10 @@ const Home: NextPage = () => {
       <main className=" flex flex-col items-center justify-center pb-10">
         <h1 className="mt-8 text-slate-100 tracking-wide font-quicksand text-3xl">TODO Application</h1>
 
-        <div className="flex max-w-7xl w-full gap-x-10">
+        <div className="flex flex-col items-center xl:flex-row max-w-7xl w-full gap-x-10">
 
           {/* Create TASK Column */}
-          <div className="flex-1   shadow-xl rounded-lg mt-10 py-10 flex flex-col items-center overflow-y-auto font-quicksand max-h-[683px]">
+          <div className="flex-1   shadow-xl rounded-lg mt-10 p-10 flex flex-col items-center overflow-y-auto font-quicksand md:max-h-[683px]">
             <div className="flex flex-col items-center">
 
               <h2 className="text-slate-100 text-center text-xl">Create TODO</h2>
@@ -235,20 +235,20 @@ const Home: NextPage = () => {
                   <label className="text-slate-200 font-normal text-xl">Priority: {priority}</label>
 
                   <div className="flex  gap-x-3">
-                    <button type="button" onClick={() => setPriority("Critical")} className={` font-bold  min-w-[60px] rounded-lg  p-2 relative ${priority === "Critical" ? "bg-[#ff0000a7] text-slate-200 before:bg-[#ff0000a7]  before:absolute before:h-1 before:w-full before:-bottom-3 before:left-0 before:rounded-lg" : "bg-[#00000038] text-white"}`} >Critical</button>
-                    <button type="button" onClick={() => setPriority("High")} className={`font-bold  min-w-[60px] rounded-lg  p-2 relative ${priority === "High" ? "bg-[#ffa600ad] text-slate-200 before:bg-[#ffa600ad]  before:absolute before:h-1 before:w-full before:-bottom-3 before:left-0 before:rounded-lg" : "bg-[#00000038] text-white"}`}>High</button>
-                    <button type="button" onClick={() => setPriority("Medium")} className={`font-bold  min-w-[60px] rounded-lg   p-2 relative ${priority === "Medium" ? "bg-[#0051ffb1] text-slate-200 before:bg-[#0051ffb1]  before:absolute before:h-1 before:w-full before:-bottom-3 before:left-0 before:rounded-lg" : "bg-[#00000038] text-white"}`}>Medium</button>
-                    <button type="button" onClick={() => setPriority("Low")} className={`font-bold  min-w-[60px] rounded-lg   p-2 relative ${priority === "Low" ? "bg-[#008011b1] text-slate-200 before:bg-[#008011b1]  before:absolute before:h-1 before:w-full before:-bottom-3 before:left-0 before:rounded-lg" : "bg-[#00000038] text-white"}`}>Low</button>
+                    <button type="button" onClick={() => setPriority("Critical")} className={` font-bold text-[14px] md:text-base min-w-[60px] rounded-lg  p-2 relative ${priority === "Critical" ? "bg-[#ff0000a7] text-slate-200 before:bg-[#ff0000a7]  before:absolute before:h-1 before:w-full before:-bottom-3 before:left-0 before:rounded-lg" : "bg-[#00000038] text-white"}`} >Critical</button>
+                    <button type="button" onClick={() => setPriority("High")} className={`font-bold text-[14px] md:text-base min-w-[60px] rounded-lg  p-2 relative ${priority === "High" ? "bg-[#ffa600ad] text-slate-200 before:bg-[#ffa600ad]  before:absolute before:h-1 before:w-full before:-bottom-3 before:left-0 before:rounded-lg" : "bg-[#00000038] text-white"}`}>High</button>
+                    <button type="button" onClick={() => setPriority("Medium")} className={`font-bold text-[14px] md:text-base min-w-[60px] rounded-lg   p-2 relative ${priority === "Medium" ? "bg-[#0051ffb1] text-slate-200 before:bg-[#0051ffb1]  before:absolute before:h-1 before:w-full before:-bottom-3 before:left-0 before:rounded-lg" : "bg-[#00000038] text-white"}`}>Medium</button>
+                    <button type="button" onClick={() => setPriority("Low")} className={`font-bold text-[14px] md:text-base min-w-[60px] rounded-lg   p-2 relative ${priority === "Low" ? "bg-[#008011b1] text-slate-200 before:bg-[#008011b1]  before:absolute before:h-1 before:w-full before:-bottom-3 before:left-0 before:rounded-lg" : "bg-[#00000038] text-white"}`}>Low</button>
                   </div>
                 </div>
 
                 <div className="flex flex-col w-full items-center gap-y-3 mt-10">
                   <label className="text-slate-200 font-normal text-xl">Category: {category}</label>
                   <div className="flex  gap-x-3">
-                    <button type="button" onClick={() => setCategory("Work")} className={`min-w-[60px] rounded-lg border p-2 text-slate-200 relative ${category === "Work" && "before:bg-slate-200 before:absolute before:h-1 before:w-full before:-bottom-3 before:left-0 before:rounded-lg"}`}>Work</button>
-                    <button type="button" onClick={() => setCategory("Personal")} className={`min-w-[60px] rounded-lg border p-2 text-slate-200  relative ${category === "Personal" && "before:bg-slate-200 before:absolute before:h-1 before:w-full before:-bottom-3 before:left-0 before:rounded-lg"}`}>Personal</button>
-                    <button type="button" onClick={() => setCategory("Errands")} className={`min-w-[60px] rounded-lg border p-2 text-slate-200 relative ${category === "Errands" && "before:bg-slate-200 before:absolute before:h-1 before:w-full before:-bottom-3 before:left-0 before:rounded-lg"}`}>Errands</button>
-                    <button type="button" onClick={() => setCategory("Groceries")} className={`min-w-[60px] rounded-lg border p-2 text-slate-200 relative ${category === "Groceries" && "before:bg-slate-200 before:absolute before:h-1 before:w-full before:-bottom-3 before:left-0 before:rounded-lg"}`}>Groceries</button>
+                    <button type="button" onClick={() => setCategory("Work")} className={`min-w-[60px] text-[14px] md:text-base rounded-lg border p-2 text-slate-200 relative ${category === "Work" && "before:bg-slate-200 before:absolute before:h-1 before:w-full before:-bottom-3 before:left-0 before:rounded-lg"}`}>Work</button>
+                    <button type="button" onClick={() => setCategory("Personal")} className={`min-w-[60px] text-[14px] md:text-base rounded-lg border p-2 text-slate-200  relative ${category === "Personal" && "before:bg-slate-200 before:absolute before:h-1 before:w-full before:-bottom-3 before:left-0 before:rounded-lg"}`}>Personal</button>
+                    <button type="button" onClick={() => setCategory("Errands")} className={`min-w-[60px] text-[14px] md:text-base rounded-lg border p-2 text-slate-200 relative ${category === "Errands" && "before:bg-slate-200 before:absolute before:h-1 before:w-full before:-bottom-3 before:left-0 before:rounded-lg"}`}>Errands</button>
+                    <button type="button" onClick={() => setCategory("Groceries")} className={`min-w-[60px] text-[14px] md:text-base rounded-lg border p-2 text-slate-200 relative ${category === "Groceries" && "before:bg-slate-200 before:absolute before:h-1 before:w-full before:-bottom-3 before:left-0 before:rounded-lg"}`}>Groceries</button>
                   </div>
                 </div>
               </div>
@@ -260,7 +260,7 @@ const Home: NextPage = () => {
             /> */}
 
             {/* Before Refactor */}
-            <form onSubmit={handleSubmit(createTodoHandler)} className="grid grid-cols-2 gap-x-8 gap-y-8 justify-items-center mt-10">
+            <form onSubmit={handleSubmit(createTodoHandler)} className="flex flex-col items-center md:grid md:grid-cols-2 gap-x-8 gap-y-8 justify-items-center mt-10">
 
               <fieldset className="flex flex-col gap-y-1">
                 <label className="text-slate-200 text-xl" htmlFor="title">Title</label>
@@ -284,7 +284,7 @@ const Home: NextPage = () => {
 
           {/* Get Tasks Column */}
 
-          <div className=" w-[500px]  shadow-xl rounded-lg mt-10 py-10 px-5 flex flex-col items-center justify-between relative ">
+          <div className=" max-w-[500px] w-[98%] shadow-xl rounded-lg mt-10 py-10 px-5 flex flex-col items-center justify-between relative ">
             {helpMenu === "open" && <div className="absolute top-0 right-0 bottom-0 left-0 bg-[#18202F] z-20 p-5 rounded-lg text-slate-200">
               <div className="flex items-center justify-between w-full">
                 <h2 className="text-2xl font-quicksand">What&apos;s Included?</h2>
@@ -306,9 +306,9 @@ const Home: NextPage = () => {
                 <h2 className="text-slate-100 w-full text-left text-2xl font-quicksand">My TODO&apos;s</h2>
                 <button type="button" onClick={() => setHelpMenu("open")} > <BiHelpCircle className="text-slate-200 text-2xl" /></button>
               </div>
-              <div className="flex items-center justify-between w-full">
-                <input placeholder='Start typing...' onChange={(e) => setSearchQuery(e.target.value)} type="search" className='p-2 rounded-lg  font-nunito focus:p-2 focus:pl-2 shadow-lg' />
-                <select className="bg-slate-300 p-2 cursor-pointer mt-5 rounded-lg mb-6" onChange={(e) => setSortState(e.target.value)}>
+              <div className="flex flex-col pt-8 md:flex-row items-center justify-between w-full">
+                <input placeholder='Start typing...' onChange={(e) => setSearchQuery(e.target.value)} type="search" className='p-2 rounded-lg w-full md:w-auto  font-nunito focus:p-2 focus:pl-2 shadow-lg' />
+                <select className="bg-slate-300 w-full md:w-auto p-2 cursor-pointer mt-5 rounded-lg mb-6" onChange={(e) => setSortState(e.target.value)}>
                   <option value="default">Default</option>
                   <option>Title A-Z</option>
                   <option>Title Z-A</option>
@@ -325,7 +325,7 @@ const Home: NextPage = () => {
 
               <div className="flex gap-x-3 items-center justify-between pb-5">
                 <p className="text-slate-200"> {todo?.length} Todo Items</p>
-                <div className="flex gap-x-2 items-center">
+                <div className="flex flex-col gap-y-2 md:flex-row gap-x-2 items-center">
                   {<button onClick={() => { setCollapseAll(true); setStartingBulkDelete(!startingBulkDelete); setToBeDeleted([]) }} className="text-slate-200 w-fit" >{startingBulkDelete ? "Cancel Delete" : "Bulk Delete"}</button>}
                   <button onClick={() => setCollapseAll(true)} className="text-slate-200 w-fit" >Collapse All</button>
                 </div>
