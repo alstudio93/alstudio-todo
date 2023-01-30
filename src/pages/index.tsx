@@ -219,18 +219,18 @@ const Home: NextPage = () => {
 
 
 
-  useEffect(() => {
-    setToBeDeleted(JSON.parse(window.localStorage.getItem("to-be-deleted") || '[]'))
-    setStartingBulkDelete(JSON.parse(window.localStorage.getItem("bulk-delete-is-active")))
-    setBulkDeleteOptions(JSON.parse(window.localStorage.getItem("bulk-delete-options")))
-  }, [])
+  // useEffect(() => {
+  //   setToBeDeleted(JSON.parse(window.localStorage.getItem("to-be-deleted") || '[]'))
+  //   setStartingBulkDelete(JSON.parse(window.localStorage.getItem("bulk-delete-is-active")))
+  //   setBulkDeleteOptions(JSON.parse(window.localStorage.getItem("bulk-delete-options")))
+  // }, [])
 
 
-  useEffect(() => {
-    window.localStorage.setItem("to-be-deleted", JSON.stringify(toBeDeleted));
-    window.localStorage.setItem("bulk-delete-is-active", JSON.stringify(startingBulkDelete));
-    window.localStorage.setItem("bulk-delete-options", JSON.stringify(bulkDeleteOptions));
-  }, [toBeDeleted, startingBulkDelete, bulkDeleteOptions])
+  // useEffect(() => {
+  //   window.localStorage.setItem("to-be-deleted", JSON.stringify(toBeDeleted));
+  //   window.localStorage.setItem("bulk-delete-is-active", JSON.stringify(startingBulkDelete));
+  //   window.localStorage.setItem("bulk-delete-options", JSON.stringify(bulkDeleteOptions));
+  // }, [toBeDeleted, startingBulkDelete, bulkDeleteOptions])
 
   return (
     <Layout>
