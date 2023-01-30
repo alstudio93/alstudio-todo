@@ -5,7 +5,7 @@ import { useForm, SubmitHandler } from "react-hook-form"
 import {
     AiOutlinePlus, AiOutlineMinus, AiOutlineDelete,
     BiArchiveIn, BsFillGearFill, CiEdit,
-    HiOutlineDuplicate, MdOutlineClose,
+    HiOutlineDuplicate, MdOutlineClose, MdRestore
 } from "../utils/icons"
 import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
@@ -95,6 +95,7 @@ const TodoItem: React.FC<{
         const { mutate: updateTodo } = api.todo.updateTodo.useMutation({
             onSuccess: async () => {
                 await client.todo.getTodos.invalidate();
+                await client.todo.getArchivedTodos.invalidate();
                 setIsEditing(false)
             },
             onError: (e) => console.log(e.message)
@@ -103,6 +104,11 @@ const TodoItem: React.FC<{
         const handleArchiveTodo = () => {
             const id = todo?.id;
             setArchived(todo.archived === true);
+            updateTodo({ id, archived })
+        }
+        const handleUndoArchiveTodo = () => {
+            const id = todo?.id;
+            setArchived(todo.archived === false);
             updateTodo({ id, archived })
         }
 
@@ -182,13 +188,18 @@ const TodoItem: React.FC<{
                             </button>
                             {showOptions && <div className="text-white absolute top-0 left-0 w-full h-full rounded-lg bg-[#18202F] z-10 flex flex-col justify-center items-center gap-y-5 p-3">
                                 <button id="settingsClose" onClick={() => setShowOptions(false)} className="absolute top-2 right-3"><MdOutlineClose className=" text-white text-2xl" /></button>
-                                {!archivePage &&
-                                    <>
-                                        <button onClick={handleArchiveTodo} className="flex  gap-x-2 items-center justify-between w-[100px]">Archive <BiArchiveIn /></button>
-                                        <button className="flex  gap-x-2 items-center justify-between w-[100px]" onClick={handleDuplicateTodo}>Duplicate <HiOutlineDuplicate className="text-slate-200" /></button>
-                                    </>
-                                }
-                                <button className="flex  gap-x-2 items-center justify-between w-[100px]" onClick={handleDeleteTodo}>Delete <AiOutlineDelete /></button>
+                                <div className=" flex flex-col gap-y-3 w-[150px]">
+                                    {!archivePage &&
+                                        <>
+                                            <button onClick={handleArchiveTodo} className="flex  gap-x-2 items-center justify-between w-full">Archive <BiArchiveIn /></button>
+                                            <button className="flex  gap-x-2 items-center justify-between w-full" onClick={handleDuplicateTodo}>Duplicate <HiOutlineDuplicate className="text-slate-200" /></button>
+                                        </>
+                                    }
+
+                                    {archivePage && <button onClick={handleUndoArchiveTodo} className="flex  gap-x-2 items-center justify-between">Undo Archive <MdRestore className=" text-white text-2xl" /></button>}
+
+                                    <button className="flex  gap-x-2 items-center justify-between w-full" onClick={handleDeleteTodo}>Delete <AiOutlineDelete className='' /></button>
+                                </div>
                             </div>
                             }
 

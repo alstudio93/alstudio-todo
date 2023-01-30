@@ -10,9 +10,6 @@ import CreateTodoForm from "../components/CreateTodoForm";
 import { BiHelpCircle, MdOutlineClose } from "../utils/icons"
 import Layout from "../components/Layout";
 
-// TODO -- Maybe create export as JSON / CSV file?
-// TODO Archive (soft delete)
-
 const Home: NextPage = () => {
 
   const client = api.useContext();
