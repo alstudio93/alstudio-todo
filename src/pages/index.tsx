@@ -69,7 +69,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      setStartingBulkDelete(JSON.parse(window.localStorage.getItem('starting-bulk-delete') || 'false'));
+      setStartingBulkDelete(Boolean(JSON.parse(window.localStorage.getItem('starting-bulk-delete') || 'false')));
     }
   }, []);
 
